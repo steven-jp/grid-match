@@ -1,0 +1,37 @@
+.App {
+  background-color: rgb(216, 83, 83);
+  text-align: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.main-grid {
+  height: 70%;
+  width: 70%;
+  max-height: 100vh;
+  max-width: 100vw;
+  margin: 5%;
+  display: inline-block;
+}
+.main-grid img {
+  max-height: 100%;
+  max-width: 100%;
+}
+.main-grid h1 {
+  color: rgb(2, 2, 2);
+  /* display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center; */
+  /* width: 100%;
+  height: 100%; */
+  font-size: 3vw;
+}
+#Card {
+  /* display: flex; */
+  /* z-index: 2; */
+}
+#Square {
+  /* flex-grow: 100; */
+  /* z-index: 1; */
+}

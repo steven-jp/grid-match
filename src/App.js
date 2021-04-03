@@ -1,24 +1,137 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState, useEffect, useRef } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import Square from "./Square";
+import Card from "./Card";
+import Grid from "./Grid";
+import GridForm from "./GridForm";
+
+// fix bug with dropping multiple images. re brings up the forms
 
 function App() {
+  const MAX_GRID_DIMS = 20;
+  const myRef = useRef(null);
+  //Handle dimensions
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [gridDimensions, setGridDimensions] = useState({ rows: "", cols: "" });
+  const [renderGridForm, setRenderGridForm] = useState(false);
+  const [renderGrid, setRenderGrid] = useState(false);
+
+  //dimensions of image
+  useEffect(() => {
+    function updateDimensions() {
+      console.log(myRef.current.offsetWidth);
+      setDimensions({
+        width: myRef.current.offsetWidth,
+        height: myRef.current.offsetHeight,
+      });
+    }
+    //Check if we resize image and remove on cleanup
+    window.addEventListener("resize", updateDimensions);
+    updateDimensions();
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, []);
+
+  //Update rows and cols when user inputs values
+  function handleGridSubmit(e) {
+    e.preventDefault();
+    let rows = gridDimensions.rows;
+    let cols = gridDimensions.cols;
+    // Check if value is between 1 and max and contains only numbers (/[^0-9]+)/
+    if (
+      rows.match(/[^0-9]+/) ||
+      rows.length > 2 ||
+      rows < 1 ||
+      rows > MAX_GRID_DIMS ||
+      cols.match(/[^0-9]+/) ||
+      cols.length > 2 ||
+      cols < 1 ||
+      cols > MAX_GRID_DIMS
+    ) {
+      alert(`Please enter a grid size between 1 and ${MAX_GRID_DIMS}`);
+      setGridDimensions({
+        rows: "",
+        cols: "",
+      });
+    } else {
+      setRenderGrid(true);
+      setRenderGridForm(false);
+    }
+  }
+  function handleGridChange(e) {
+    setGridDimensions({
+      ...gridDimensions,
+      [e.target.name]: e.target.value,
+    });
+  }
+
+  //Handle image uploads to main-grid.
+  const [file, setFile] = useState(null);
+  const [text, setText] = useState("Drag Image Here");
+  const fileUpload = (e) => {
+    e.preventDefault();
+    let files = e.dataTransfer.files;
+    //handle if drop isn't an image
+    if (files[0] && files[0].type.startsWith("image")) {
+      URL.createObjectURL(files[0]);
+      setFile(URL.createObjectURL(files[0]));
+      setText("");
+      setRenderGridForm(true);
+    }
+  };
+
+  function AddGrid() {
+    if (renderGrid === true) {
+      return (
+        <Grid
+          width={dimensions.width}
+          height={dimensions.height}
+          rows={gridDimensions.rows}
+          cols={gridDimensions.cols}
+        />
+      );
+    }
+    return null;
+  }
+  function AddGridForm() {
+    if (renderGridForm === true) {
+      return (
+        <GridForm
+          gridDimensions={gridDimensions}
+          handleGridChange={handleGridChange}
+          handleGridSubmit={handleGridSubmit}
+        />
+      );
+    }
+    return null;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <DndProvider backend={HTML5Backend}>
+      <div className="App">
+        <div
+          ref={myRef}
+          className="main-grid"
+          onDrop={fileUpload}
+          style={{
+            backgroundColor: file ? "transparent" : "rgb(72, 72, 72)",
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <h1>{text}</h1>
+          <img className="user-image" src={file} alt="" />
+          <AddGridForm />
+          {/* <GridForm
+            gridDimensions={gridDimensions}
+            handleGridChange={handleGridChange}
+            handleGridSubmit={handleGridSubmit}
+          /> */}
+          <AddGrid draggable="true" />
+          <Square id="1" width={dimensions.width} height={dimensions.height} />
+          <Card id="1" width={dimensions.width} height={dimensions.height} />
+        </div>
+      </div>
+    </DndProvider>
   );
 }
 
