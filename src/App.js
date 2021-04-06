@@ -14,14 +14,18 @@ function App() {
   const myRef = useRef(null);
   //Handle dimensions
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [gridDimensions, setGridDimensions] = useState({ rows: "", cols: "" });
+  // const [gridDimensions, setGridDimensions] = useState({ rows: "", cols: "" });
+  const [gridDimensions, setGridDimensions] = useState({
+    rows: "3",
+    cols: "3",
+  });
+
   const [renderGridForm, setRenderGridForm] = useState(false);
   const [renderGrid, setRenderGrid] = useState(false);
 
   //dimensions of image
   useEffect(() => {
     function updateDimensions() {
-      console.log(myRef.current.offsetWidth);
       setDimensions({
         width: myRef.current.offsetWidth,
         height: myRef.current.offsetHeight,
