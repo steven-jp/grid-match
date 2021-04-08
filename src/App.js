@@ -2,8 +2,6 @@ import "./App.css";
 import { useState, useEffect, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import Square from "./Square";
-import Card from "./Card";
 import Grid from "./Grid";
 import GridForm from "./GridForm";
 
@@ -78,7 +76,6 @@ function App() {
     let files = e.dataTransfer.files;
     //handle if drop isn't an image
     if (files[0] && files[0].type.startsWith("image")) {
-      URL.createObjectURL(files[0]);
       setFile(URL.createObjectURL(files[0]));
       setText("");
       setRenderGridForm(true);
@@ -93,6 +90,7 @@ function App() {
           height={dimensions.height}
           rows={gridDimensions.rows}
           cols={gridDimensions.cols}
+          imgBlob={file}
         />
       );
     }
@@ -118,6 +116,7 @@ function App() {
           ref={myRef}
           className="main-grid"
           onDrop={fileUpload}
+          onDragOver={(e) => e.preventDefault()}
           style={{
             backgroundColor: file ? "transparent" : "rgb(72, 72, 72)",
           }}
@@ -125,14 +124,7 @@ function App() {
           <h1>{text}</h1>
           <img className="user-image" src={file} alt="" />
           <AddGridForm />
-          {/* <GridForm
-            gridDimensions={gridDimensions}
-            handleGridChange={handleGridChange}
-            handleGridSubmit={handleGridSubmit}
-          /> */}
           <AddGrid draggable="true" />
-          <Square id="1" width={dimensions.width} height={dimensions.height} />
-          <Card id="1" width={dimensions.width} height={dimensions.height} />
         </div>
       </div>
     </DndProvider>

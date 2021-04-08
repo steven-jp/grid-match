@@ -1,11 +1,14 @@
 import React, { useRef, useEffect, useState } from "react";
-import DeleteButton from "./DeleteButton";
+import DeleteButton from "./buttons/DeleteButton";
+import ClipButton from "./buttons/ClipButton";
+import ClipGrid from "./ClipGrid";
 
-function Grid({ width, height, rows, cols }) {
+function Grid({ width, height, rows, cols, imgBlob }) {
   const canvasRef = useRef(null);
   const [canvasLines] = useState([]);
   const [createdPreviously, setCreatedPreviously] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
+  const [renderCards, setRenderCards] = useState(false);
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
@@ -108,6 +111,13 @@ function Grid({ width, height, rows, cols }) {
       }
     }
     draw(ctx);
+
+    //maybe add this to context and pass down to card/square ?
+    // let img = new Image();
+    // img.src = imgBlob;
+    // img.onload = function () {
+    //   ctx.drawImage(img, 0, 0, 44, 55, 0, 0, width, height);
+    // };
   };
 
   /* Update view of grid */
@@ -274,9 +284,20 @@ function Grid({ width, height, rows, cols }) {
     setButtonClicked(!buttonClicked);
   };
 
+  const clipButtonHandler = (e) => {
+    setRenderCards(true);
+  };
+
   return (
     <div>
+      <ClipButton clipButtonHandler={clipButtonHandler} />
       <DeleteButton buttonClicked={buttonClicked} toggle={deleteButtonToggle} />
+      <ClipGrid
+        clicked={renderCards}
+        canvasLines={canvasLines}
+        width={width}
+        height={height}
+      />
       <canvas
         ref={canvasRef}
         className="Grid"
