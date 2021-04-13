@@ -2,7 +2,7 @@
 import { useDrop } from "react-dnd";
 import { ItemTypes } from "./ItemTypes";
 
-function Square({ id }) {
+function Square({ id, width, height, dimensions }) {
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
     accept: ItemTypes.CARD,
     drop: (item) => validDrop(item),
@@ -26,8 +26,10 @@ function Square({ id }) {
       style={{
         display: "inline-block",
         backgroundColor: isOver ? "green" : "blue",
-        height: "100px",
-        width: "100px",
+        top: dimensions.yStart,
+        left: dimensions.xStart,
+        height: dimensions.yEnd, // need to fix this.
+        width: dimensions.xEnd,
         zIndex: "1",
       }}
     >

@@ -18,8 +18,10 @@ function App() {
     cols: "3",
   });
 
-  const [renderGridForm, setRenderGridForm] = useState(false);
-  const [renderGrid, setRenderGrid] = useState(false);
+  const [renderForm, setRenderForm] = useState(false); // Renders user input for grid.
+  const [renderGrid, setRenderGrid] = useState(false); //displays grid if we have user input
+  const [renderImage, setRenderImage] = useState(false); // show image before grid form. remove after clipping.
+  const [renderCards, setRenderCards] = useState(false); // used to render cards after clip grid button pressed.
 
   //dimensions of image
   useEffect(() => {
@@ -58,7 +60,7 @@ function App() {
       });
     } else {
       setRenderGrid(true);
-      setRenderGridForm(false);
+      setRenderForm(false);
     }
   }
   function handleGridChange(e) {
@@ -78,7 +80,8 @@ function App() {
     if (files[0] && files[0].type.startsWith("image")) {
       setFile(URL.createObjectURL(files[0]));
       setText("");
-      setRenderGridForm(true);
+      setRenderForm(true);
+      setRenderImage(true);
     }
   };
 
@@ -91,13 +94,15 @@ function App() {
           rows={gridDimensions.rows}
           cols={gridDimensions.cols}
           imgBlob={file}
+          renderGridHandler={renderGridHandler}
+          renderCards={renderCards}
         />
       );
     }
     return null;
   }
   function AddGridForm() {
-    if (renderGridForm === true) {
+    if (renderForm === true) {
       return (
         <GridForm
           gridDimensions={gridDimensions}
@@ -107,6 +112,20 @@ function App() {
       );
     }
     return null;
+  }
+  function AddUserImage() {
+    if (renderImage === true) {
+      return <img className="user-image" src={file} alt="" />;
+    }
+    return null;
+  }
+
+  //child component calls this to remove image from grid. We set '
+  // We do this to display image on drop before grid form is displayed.
+  function renderGridHandler() {
+    console.log("c");
+    setRenderImage(false);
+    setRenderCards(true);
   }
 
   return (
@@ -121,8 +140,8 @@ function App() {
             backgroundColor: file ? "transparent" : "rgb(72, 72, 72)",
           }}
         >
+          <AddUserImage />
           <h1>{text}</h1>
-          <img className="user-image" src={file} alt="" />
           <AddGridForm />
           <AddGrid draggable="true" />
         </div>

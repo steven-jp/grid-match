@@ -1,26 +1,37 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import DeleteButton from "./buttons/DeleteButton";
 import ClipButton from "./buttons/ClipButton";
 import ClipGrid from "./ClipGrid";
 
-function Grid({ width, height, rows, cols, imgBlob }) {
+function Grid({
+  width,
+  height,
+  rows,
+  cols,
+  imgBlob,
+  renderGridHandler,
+  renderCards,
+}) {
   const canvasRef = useRef(null);
-  const [canvasLines] = useState([]);
+  const canvasLines = useRef([]);
   const [createdPreviously, setCreatedPreviously] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
-  const [renderCards, setRenderCards] = useState(false);
+  // const [renderCards, setRenderCards] = useState(false);
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     createGrid(ctx);
-  }, [canvasLines]);
+  }, [canvasLines]); // changed from [canvasLines.current]
 
+  //---------------------------------------------
   /* Add test to determine if values are correct */
 
   /* BUG FIX NEEDED: if you draw a bunch then it will just look like a black square 
     -- if u resize the window then it removes the boxes
     -- if no more lines then crashes
   */
+  /* todo: Fix rows to look like columns */
+  //---------------------------------------------
 
   /* create grid and add view */
   const createGrid = (ctx) => {
@@ -34,18 +45,31 @@ function Grid({ width, height, rows, cols, imgBlob }) {
     let currentRow = 0;
     let currentCol = 0;
     //if we have already created the grid we want to keep deleted items in respective spots.
-    // let createdPreviously = false;
-    if (canvasLines.length !== 0) {
+    if (canvasLines.current.length !== 0) {
       setCreatedPreviously(true);
     }
 
-    //draw columns
-    for (let x = 0; x < width; x += lineX) {
-      currentRow = 0;
-      for (let y = 0; y < height; y += lineY) {
-        createLine(x, y, lineSize, lineY, false, currentCol, currentRow++);
+    //draw columns row at a time for when we check bounds in ClipGrid.
+    let lastIndex = 0;
+    for (let y = 0; y < height; y += lineY) {
+      currentCol = 0;
+      for (let x = 0; x < width; x += lineX) {
+        createLine(x, y, lineSize, lineY, false, currentCol++, currentRow);
       }
-      currentCol++;
+      /* Draw right columns on edges of canvas to prevent 
+          being out of bounds */
+      if (currentCol === parseInt(cols)) {
+        createLine(
+          width - lineSize,
+          y,
+          lineSize,
+          lineY,
+          false,
+          currentCol,
+          lastIndex++,
+        );
+      }
+      currentRow++;
     }
 
     currentRow = 0;
@@ -58,22 +82,8 @@ function Grid({ width, height, rows, cols, imgBlob }) {
       currentRow++;
     }
 
-    /* Draw right and bottom lines on edges of canvas to prevent 
+    /* Draw bottom row on edges of canvas to prevent 
     being out of bounds */
-
-    //right column
-    currentRow = 0;
-    for (let y = 0; y < height; y += lineY) {
-      createLine(
-        width - lineSize,
-        y,
-        lineSize,
-        lineY,
-        false,
-        parseInt(cols),
-        currentRow++,
-      );
-    }
 
     //Draw bottom row
     currentCol = 0;
@@ -88,15 +98,13 @@ function Grid({ width, height, rows, cols, imgBlob }) {
         currentCol++,
       );
     }
-
     function createLine(x, y, width, height, isRow, index, oppositeAxisIndex) {
       let path = new Path2D();
       path.rect(x, y, width, height);
 
       // If line object was already created, only update path
       if (createdPreviously === true) {
-        canvasLines[index].path = path;
-        // updateCanvasLines(canvasLines[index], "path", path, index);
+        canvasLines.current[index].path = path;
       } else {
         let line = {
           isRow: isRow,
@@ -106,8 +114,7 @@ function Grid({ width, height, rows, cols, imgBlob }) {
           index: index,
           oppositeAxisIndex: oppositeAxisIndex,
         };
-        canvasLines.push(line);
-        // updateCanvasLines(line);
+        canvasLines.current.push(line);
       }
     }
     draw(ctx);
@@ -123,7 +130,7 @@ function Grid({ width, height, rows, cols, imgBlob }) {
   /* Update view of grid */
   function draw(ctx) {
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    canvasLines.forEach((line) => {
+    canvasLines.current.forEach((line) => {
       //only draw lines that haven't been deleted
       if (line.deleted === false) {
         ctx.fill(line.path, "nonzero");
@@ -131,34 +138,15 @@ function Grid({ width, height, rows, cols, imgBlob }) {
     });
   }
 
-  // function updateCanvasLines(line, pathName, path, index) {
-  //   //add new line
-  //   if (pathName === undefined || path === undefined || index === undefined) {
-  //     setCanvasLines([...canvasLines, line]);
-  //     console.log(canvasLines);
-  //   }
-  //   // update specific value of line
-  //   else {
-  //     // let updatedLine = line;
-  //     const index = canvasLines.indexOf(line);
-  //     let updatedLine = canvasLines.splice(index, 1);
-  //     // canvasLines[index][pathName] = path;
-  //     updatedLine[pathName] = path;
-  //     setCanvasLines([...canvasLines, updatedLine]);
-  //   }
-  // }
-
   const onClickHandler = (e) => {
     const ctx = canvasRef.current.getContext("2d");
     let bounds = canvasRef.current.getBoundingClientRect();
     let x = e.clientX - bounds.left;
     let y = e.clientY - bounds.top;
     if (buttonClicked) {
-      for (let i = 0; i < canvasLines.length; i++) {
-        if (ctx.isPointInPath(canvasLines[i].path, x, y, "nonzero")) {
-          canvasLines[i].deleted = true;
-
-          // updateCanvasLines(canvasLines[i], "deleted", true);
+      for (let i = 0; i < canvasLines.current.length; i++) {
+        if (ctx.isPointInPath(canvasLines.current[i].path, x, y, "nonzero")) {
+          canvasLines.current[i].deleted = true;
         }
       }
     }
@@ -181,28 +169,28 @@ function Grid({ width, height, rows, cols, imgBlob }) {
     let bounds = canvasRef.current.getBoundingClientRect();
     let x = e.clientX - bounds.left;
     let y = e.clientY - bounds.top;
-    for (let i = 0; i < canvasLines.length; i++) {
-      if (ctx.isPointInPath(canvasLines[i].path, x, y, "nonzero")) {
-        canvasLines.forEach((line) => {
+    for (let i = 0; i < canvasLines.current.length; i++) {
+      if (ctx.isPointInPath(canvasLines.current[i].path, x, y, "nonzero")) {
+        for (const line of canvasLines.current) {
           if (
-            line.isRow === canvasLines[i].isRow &&
-            line.index === canvasLines[i].index
+            line.isRow === canvasLines.current[i].isRow &&
+            line.index === canvasLines.current[i].index
           ) {
             gridLines.current.push(line);
           }
           if (
-            line.isRow !== canvasLines[i].isRow &&
-            line.oppositeAxisIndex === canvasLines[i].index - 1
+            line.isRow !== canvasLines.current[i].isRow &&
+            line.oppositeAxisIndex === canvasLines.current[i].index - 1
           ) {
             gridLines.shrinking.push(line);
           }
           if (
-            line.isRow !== canvasLines[i].isRow &&
-            line.oppositeAxisIndex === canvasLines[i].index
+            line.isRow !== canvasLines.current[i].isRow &&
+            line.oppositeAxisIndex === canvasLines.current[i].index
           ) {
             gridLines.expanding.push(line);
           }
-        });
+        }
         startX = x;
         startY = y;
         gridLines.moving = true;
@@ -284,19 +272,21 @@ function Grid({ width, height, rows, cols, imgBlob }) {
     setButtonClicked(!buttonClicked);
   };
 
-  const clipButtonHandler = (e) => {
-    setRenderCards(true);
-  };
+  // const clipButtonHandler = (e) => {
+  //   renderGridHandler();
+  // };
 
   return (
     <div>
-      <ClipButton clipButtonHandler={clipButtonHandler} />
+      <ClipButton clipButtonHandler={renderGridHandler} />
       <DeleteButton buttonClicked={buttonClicked} toggle={deleteButtonToggle} />
       <ClipGrid
         clicked={renderCards}
-        canvasLines={canvasLines}
+        canvasLines={canvasLines.current}
         width={width}
         height={height}
+        imgBlob={imgBlob}
+        canvasRefHandler={() => canvasRef}
       />
       <canvas
         ref={canvasRef}
