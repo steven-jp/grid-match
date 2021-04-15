@@ -28,8 +28,8 @@ function Square({ id, width, height, dimensions }) {
         backgroundColor: isOver ? "green" : "blue",
         top: dimensions.yStart,
         left: dimensions.xStart,
-        height: dimensions.yEnd, // need to fix this.
-        width: dimensions.xEnd,
+        height: dimensions.yEnd - dimensions.yStart, // need to fix this.
+        width: dimensions.xEnd - dimensions.xStart,
         zIndex: "1",
       }}
     >

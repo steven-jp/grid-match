@@ -22,8 +22,9 @@ function ClipGrid({
   //todo fix where to place end point if current col doesnt have a bottom row.
 
   //-----------------------------------
-
   if (clicked) {
+    console.log(width, height, imgBlob, canvasRefHandler);
+
     /* Drawing points are used to determine where to draw boxes. We want to create boxes using the top left coords
      Spanning to the bottom right coords of lines that have collisions. 
      */
@@ -35,11 +36,13 @@ function ClipGrid({
       let validCols = canvasLines.filter(
         (line) => line.deleted === false && line.isRow === false,
       );
-      console.log(validCols);
 
       let validRows = canvasLines.filter(
         (line) => line.deleted === false && line.isRow === true,
       );
+      console.log(validCols);
+      // console.log("rows", validRows);
+
       for (let i = 0; i < validCols.length; i++) {
         const currentCol = validCols[i];
         let a = containsRow("TOP", currentCol, validRows, null, MAX_DIFF);
@@ -48,7 +51,6 @@ function ClipGrid({
           let sameIndexCols = validCols.filter(
             (line) => line.index === currentCol.index,
           );
-
           const nextCol = validCols[i + 1];
           if (
             containsRow("BOTTOM", nextCol, validRows, sameIndexCols, MAX_DIFF)
@@ -90,26 +92,24 @@ function ClipGrid({
               height + i * 20,
             );
           }};  */}
-        <>
-          {validCoords.map((coordinate, i) => {
-            const dimensions = {
-              xStart: coordinate.xStart,
-              yStart: coordinate.yStart,
-              xEnd: coordinate.xEnd,
-              yEnd: coordinate.yEnd,
-            };
-            return (
-              <Square
-                id="1"
-                width={width}
-                height={height}
-                dimensions={dimensions}
-              />
-            );
-          })}
-          ;
-        </>
-
+        {/* <> */}
+        {validCoords.map((coordinate, i) => {
+          const dimensions = {
+            xStart: coordinate.xStart,
+            yStart: coordinate.yStart,
+            xEnd: coordinate.xEnd,
+            yEnd: coordinate.yEnd,
+          };
+          return (
+            <Square
+              key={i}
+              width={width}
+              height={height}
+              dimensions={dimensions}
+            />
+          );
+        })}
+        ;{/* </> */}
         {/* <Square id="1" width={width} height={height} /> */}
         {/* <Card id="1" width={width} height={height} /> */}
       </>

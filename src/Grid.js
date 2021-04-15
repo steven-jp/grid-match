@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import DeleteButton from "./buttons/DeleteButton";
 import ClipButton from "./buttons/ClipButton";
 import ClipGrid from "./ClipGrid";
@@ -14,6 +14,7 @@ function Grid({
 }) {
   const canvasRef = useRef(null);
   const canvasLines = useRef([]);
+
   const [createdPreviously, setCreatedPreviously] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
   // const [renderCards, setRenderCards] = useState(false);
@@ -21,6 +22,7 @@ function Grid({
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     createGrid(ctx);
+    console.log(".....", renderCards, "..", canvasLines);
   }, [canvasLines]); // changed from [canvasLines.current]
 
   //---------------------------------------------
@@ -268,18 +270,15 @@ function Grid({
     };
   };
 
-  const deleteButtonToggle = (e) => {
-    setButtonClicked(!buttonClicked);
-  };
-
-  // const clipButtonHandler = (e) => {
-  //   renderGridHandler();
-  // };
-
   return (
     <div>
+      {console.log("xx")}
       <ClipButton clipButtonHandler={renderGridHandler} />
-      <DeleteButton buttonClicked={buttonClicked} toggle={deleteButtonToggle} />
+      <DeleteButton
+        buttonClicked={buttonClicked}
+        toggle={() => setButtonClicked(!buttonClicked)}
+      />
+      {console.log(renderCards, "222", canvasLines.current)}
       <ClipGrid
         clicked={renderCards}
         canvasLines={canvasLines.current}
