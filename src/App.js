@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, createContext } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Grid from "./Grid";
@@ -7,21 +7,38 @@ import GridForm from "./GridForm";
 
 // fix bug with dropping multiple images. re brings up the forms
 
+export const GridContext = createContext();
+
 function App() {
-  const MAX_GRID_DIMS = 20;
   const myRef = useRef(null);
-  //Handle dimensions
+  const MAX_GRID_DIMS = 20;
+
+  //Passed globally for grid creation
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   // const [gridDimensions, setGridDimensions] = useState({ rows: "", cols: "" });
   const [gridDimensions, setGridDimensions] = useState({
     rows: "3",
     cols: "3",
   });
-
-  const [renderForm, setRenderForm] = useState(false); // Renders user input for grid.
-  const [renderGrid, setRenderGrid] = useState(false); //displays grid if we have user input
   const [renderImage, setRenderImage] = useState(false); // show image before grid form. remove after clipping.
   const [renderCards, setRenderCards] = useState(false); // used to render cards after clip grid button pressed.
+  const [renderButtons, setRenderButtons] = useState({
+    delete: true,
+    clip: true,
+  });
+
+  // This components hooks
+  const [renderForm, setRenderForm] = useState(false); // Renders user input for grid.
+  const [renderGrid, setRenderGrid] = useState(false); //displays grid if we have user input
+
+  //Global variables object
+  const ContextValue = {
+    renderCards: renderCards,
+    renderImage: renderImage,
+    gridDimensions: gridDimensions, //.width, .height
+    dimensions: dimensions, // .rows, .cols
+    renderButtons: renderButtons, //.clip, .grid
+  };
 
   //dimensions of image
   useEffect(() => {
@@ -89,13 +106,13 @@ function App() {
     if (renderGrid === true) {
       return (
         <Grid
-          width={dimensions.width}
-          height={dimensions.height}
-          rows={gridDimensions.rows}
-          cols={gridDimensions.cols}
+          // width={dimensions.width}
+          // height={dimensions.height}
+          // rows={gridDimensions.rows}
+          // cols={gridDimensions.cols}
           imgBlob={file}
           renderGridHandler={renderGridHandler}
-          renderCards={renderCards}
+          // renderCards={renderCards}
         />
       );
     }
@@ -123,9 +140,10 @@ function App() {
   //child component calls this to remove image from grid. We set '
   // We do this to display image on drop before grid form is displayed.
   function renderGridHandler() {
-    console.log("c");
+    console.log("clicked");
     setRenderImage(false);
     setRenderCards(true);
+    setRenderButtons(false);
   }
 
   return (
@@ -142,8 +160,10 @@ function App() {
         >
           <AddUserImage />
           <h1>{text}</h1>
-          <AddGridForm />
-          <AddGrid draggable="true" />
+          <GridContext.Provider value={ContextValue}>
+            <AddGridForm />
+            <AddGrid draggable="true" />
+          </GridContext.Provider>
         </div>
       </div>
     </DndProvider>

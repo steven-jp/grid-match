@@ -1,33 +1,31 @@
-import React from "react";
+import React, { useContext } from "react";
 import Square from "./Square";
 import Card from "./Card";
 import "./App.css";
+import { GridContext } from "./App";
 
-function ClipGrid({
-  clicked,
-  canvasLines,
-  width,
-  height,
-  imgBlob,
-  canvasRefHandler,
-}) {
+function ClipGrid({ canvasLines, imgBlob, canvasContextHandler }) {
   // let img = new Image();
   // img.src = imgBlob;
   // img.onload = function () {
   //   ctx.drawImage(img, 0, 0, 44, 55, 0, 0, width, height);
   // };
 
+  const gridContext = useContext(GridContext);
+  // let width = gridContext.dimensions.width;
+  let clicked = gridContext.renderCards;
+  console.log("this should not be undefined on click: ", canvasLines[0]);
+  // let height = gridContext.dimensions.height;
+
   //-----------------------------------
 
   //todo fix where to place end point if current col doesnt have a bottom row.
-
   //-----------------------------------
   if (clicked) {
-    console.log(width, height, imgBlob, canvasRefHandler);
-
     /* Drawing points are used to determine where to draw boxes. We want to create boxes using the top left coords
      Spanning to the bottom right coords of lines that have collisions. 
      */
+
     function createCoordinates() {
       const MAX_DIFF = 10;
       //min and max coordinates will always be a drawing point.
@@ -40,7 +38,7 @@ function ClipGrid({
       let validRows = canvasLines.filter(
         (line) => line.deleted === false && line.isRow === true,
       );
-      console.log(validCols);
+      // console.log(validCols);
       // console.log("rows", validRows);
 
       for (let i = 0; i < validCols.length; i++) {
@@ -66,14 +64,14 @@ function ClipGrid({
       }
       return validCoords;
     }
+
     let validCoords = createCoordinates();
     console.log(validCoords);
-
     let img = new Image();
     img.src = imgBlob;
-    let canvasRef = canvasRefHandler();
+    let ctx = canvasContextHandler();
     // const ctx = canvasRef.current.getContext("2d");
-    // console.log(ctx);
+    console.log(ctx);
     //find next col and row with smallest x+width  and col with smallest y >= current y + height.
     return (
       <>
@@ -100,14 +98,7 @@ function ClipGrid({
             xEnd: coordinate.xEnd,
             yEnd: coordinate.yEnd,
           };
-          return (
-            <Square
-              key={i}
-              width={width}
-              height={height}
-              dimensions={dimensions}
-            />
-          );
+          return <Square key={i} dimensions={dimensions} />;
         })}
         ;{/* </> */}
         {/* <Square id="1" width={width} height={height} /> */}
@@ -119,7 +110,6 @@ function ClipGrid({
 }
 
 function containsRow(rowType, currentCol, rows, cols, MAX_DIFF) {
-  // rows.forEach((currentRow) => {
   for (let i = 0; i < rows.length; i++) {
     const currentRow = rows[i];
     //Checking from left corner
@@ -133,8 +123,6 @@ function containsRow(rowType, currentCol, rows, cols, MAX_DIFF) {
     }
     //checking bottom right corner in while loop
     if (rowType === "BOTTOM") {
-      // while()
-
       let xDiff = Math.abs(
         currentRow.coords.x +
           currentRow.coords.width -

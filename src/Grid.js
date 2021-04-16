@@ -1,29 +1,36 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo, useContext } from "react";
 import DeleteButton from "./buttons/DeleteButton";
 import ClipButton from "./buttons/ClipButton";
 import ClipGrid from "./ClipGrid";
+import { GridContext } from "./App";
 
-function Grid({
-  width,
-  height,
-  rows,
-  cols,
-  imgBlob,
-  renderGridHandler,
-  renderCards,
-}) {
+function Grid({ imgBlob, renderGridHandler }) {
   const canvasRef = useRef(null);
   const canvasLines = useRef([]);
 
   const [createdPreviously, setCreatedPreviously] = useState(false);
-  const [buttonClicked, setButtonClicked] = useState(false);
-  // const [renderCards, setRenderCards] = useState(false);
+  const [deleteClicked, setDeleteClicked] = useState(false);
+  const gridContext = useContext(GridContext);
+  let width = gridContext.dimensions.width;
+  let height = gridContext.dimensions.height;
+  let rows = gridContext.gridDimensions.rows;
+  let cols = gridContext.gridDimensions.cols;
+  let renderButtons = gridContext.renderButtons;
+
+  // let renderCards = gridContext.renderCards;
+  // let setRenderCards = gridContext.setRenderCards;
+
+  const [renderContext, setRenderContext] = useState(null); // fix this
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     createGrid(ctx);
-    console.log(".....", renderCards, "..", canvasLines);
+    setRenderContext(ctx);
   }, [canvasLines]); // changed from [canvasLines.current]
+
+  // const mem = useMemo(() => {
+  //   return canvasLines;
+  // }, [canvasLines]);
 
   //---------------------------------------------
   /* Add test to determine if values are correct */
@@ -37,7 +44,6 @@ function Grid({
 
   /* create grid and add view */
   const createGrid = (ctx) => {
-    // ctx.beginPath();
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     //used to determine how big each line will be for grid.
     const lineSize = 5;
@@ -50,7 +56,6 @@ function Grid({
     if (canvasLines.current.length !== 0) {
       setCreatedPreviously(true);
     }
-
     //draw columns row at a time for when we check bounds in ClipGrid.
     let lastIndex = 0;
     for (let y = 0; y < height; y += lineY) {
@@ -100,9 +105,17 @@ function Grid({
         currentCol++,
       );
     }
-    function createLine(x, y, width, height, isRow, index, oppositeAxisIndex) {
+    function createLine(
+      x,
+      y,
+      lineWidth,
+      lineHeight,
+      isRow,
+      index,
+      oppositeAxisIndex,
+    ) {
       let path = new Path2D();
-      path.rect(x, y, width, height);
+      path.rect(x, y, lineWidth, lineHeight);
 
       // If line object was already created, only update path
       if (createdPreviously === true) {
@@ -112,13 +125,14 @@ function Grid({
           isRow: isRow,
           deleted: false,
           path: path,
-          coords: { x: x, y: y, width: width, height: height },
+          coords: { x: x, y: y, width: lineWidth, height: lineHeight },
           index: index,
           oppositeAxisIndex: oppositeAxisIndex,
         };
         canvasLines.current.push(line);
       }
     }
+
     draw(ctx);
 
     //maybe add this to context and pass down to card/square ?
@@ -145,7 +159,7 @@ function Grid({
     let bounds = canvasRef.current.getBoundingClientRect();
     let x = e.clientX - bounds.left;
     let y = e.clientY - bounds.top;
-    if (buttonClicked) {
+    if (deleteClicked) {
       for (let i = 0; i < canvasLines.current.length; i++) {
         if (ctx.isPointInPath(canvasLines.current[i].path, x, y, "nonzero")) {
           canvasLines.current[i].deleted = true;
@@ -270,22 +284,18 @@ function Grid({
     };
   };
 
+  console.log("here");
   return (
     <div>
-      {console.log("xx")}
       <ClipButton clipButtonHandler={renderGridHandler} />
       <DeleteButton
-        buttonClicked={buttonClicked}
-        toggle={() => setButtonClicked(!buttonClicked)}
+        buttonClicked={deleteClicked}
+        toggle={() => setDeleteClicked(!deleteClicked)}
       />
-      {console.log(renderCards, "222", canvasLines.current)}
       <ClipGrid
-        clicked={renderCards}
         canvasLines={canvasLines.current}
-        width={width}
-        height={height}
         imgBlob={imgBlob}
-        canvasRefHandler={() => canvasRef}
+        canvasContextHandler={() => renderContext}
       />
       <canvas
         ref={canvasRef}

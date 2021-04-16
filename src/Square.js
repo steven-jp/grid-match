@@ -1,8 +1,9 @@
 // import "./Square.css";
 import { useDrop } from "react-dnd";
+import { useContext } from "react";
 import { ItemTypes } from "./ItemTypes";
 
-function Square({ id, width, height, dimensions }) {
+function Square({ id, dimensions }) {
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
     accept: ItemTypes.CARD,
     drop: (item) => validDrop(item),
