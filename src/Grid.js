@@ -16,6 +16,14 @@ function Grid({ imgBlob, renderGridHandler }) {
   let rows = gridContext.gridDimensions.rows;
   let cols = gridContext.gridDimensions.cols;
   let renderButtons = gridContext.renderButtons;
+  let maxWidth = gridContext.maxWidth;
+  let setMaxWidth = gridContext.setMaxWidth;
+
+  let maxHeight = gridContext.maxHeight;
+  let setMaxHeight = gridContext.setMaxHeight;
+
+  // const [maxWidth, setMaxWidth] = useState(width);
+  // const [maxHeight, setMaxHeight] = useState(height);
 
   // let renderCards = gridContext.renderCards;
   // let setRenderCards = gridContext.setRenderCards;
@@ -26,11 +34,24 @@ function Grid({ imgBlob, renderGridHandler }) {
     const ctx = canvasRef.current.getContext("2d");
     createGrid(ctx);
     setRenderContext(ctx);
+    console.log(maxWidth, maxHeight);
   }, [canvasLines]); // changed from [canvasLines.current]
 
   // const mem = useMemo(() => {
   //   return canvasLines;
   // }, [canvasLines]);
+
+  function calculateGridSize() {
+    let x = 0,
+      y = 0;
+    canvasLines.current.forEach((line) => {
+      x = Math.max(x, line.coords.x + line.coords.width);
+      y = Math.max(y, line.coords.y + line.coords.height);
+    });
+    setMaxHeight(y);
+    setMaxWidth(x);
+    console.log(maxWidth, maxHeight);
+  }
 
   //---------------------------------------------
   /* Add test to determine if values are correct */
@@ -47,8 +68,8 @@ function Grid({ imgBlob, renderGridHandler }) {
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     //used to determine how big each line will be for grid.
     const lineSize = 5;
-    const lineX = width / cols;
-    const lineY = height / rows;
+    const lineX = maxWidth / cols;
+    const lineY = maxHeight / rows;
     //keep track of the current row/col for easy lookup on drag.
     let currentRow = 0;
     let currentCol = 0;
@@ -58,16 +79,16 @@ function Grid({ imgBlob, renderGridHandler }) {
     }
     //draw columns row at a time for when we check bounds in ClipGrid.
     let lastIndex = 0;
-    for (let y = 0; y < height; y += lineY) {
+    for (let y = 0; y < maxHeight; y += lineY) {
       currentCol = 0;
-      for (let x = 0; x < width; x += lineX) {
+      for (let x = 0; x < maxWidth; x += lineX) {
         createLine(x, y, lineSize, lineY, false, currentCol++, currentRow);
       }
       /* Draw right columns on edges of canvas to prevent 
           being out of bounds */
       if (currentCol === parseInt(cols)) {
         createLine(
-          width - lineSize,
+          maxWidth - lineSize,
           y,
           lineSize,
           lineY,
@@ -81,9 +102,9 @@ function Grid({ imgBlob, renderGridHandler }) {
 
     currentRow = 0;
     //draw rows
-    for (let y = 0; y < height; y += lineY) {
+    for (let y = 0; y < maxHeight; y += lineY) {
       currentCol = 0;
-      for (let x = 0; x < width; x += lineX) {
+      for (let x = 0; x < maxWidth; x += lineX) {
         createLine(x, y, lineX, lineSize, true, currentRow, currentCol++);
       }
       currentRow++;
@@ -94,10 +115,10 @@ function Grid({ imgBlob, renderGridHandler }) {
 
     //Draw bottom row
     currentCol = 0;
-    for (let x = 0; x < width; x += lineX) {
+    for (let x = 0; x < maxWidth; x += lineX) {
       createLine(
         x,
-        height - lineSize,
+        maxHeight - lineSize,
         lineX,
         lineSize,
         true,
@@ -282,6 +303,7 @@ function Grid({ imgBlob, renderGridHandler }) {
       shrinking: [],
       expanding: [],
     };
+    calculateGridSize();
   };
 
   console.log("here");

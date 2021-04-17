@@ -26,6 +26,8 @@ function App() {
     delete: true,
     clip: true,
   });
+  const [maxWidth, setMaxWidth] = useState(dimensions.width);
+  const [maxHeight, setMaxHeight] = useState(dimensions.height);
 
   // This components hooks
   const [renderForm, setRenderForm] = useState(false); // Renders user input for grid.
@@ -38,6 +40,10 @@ function App() {
     gridDimensions: gridDimensions, //.width, .height
     dimensions: dimensions, // .rows, .cols
     renderButtons: renderButtons, //.clip, .grid
+    maxWidth: maxWidth,
+    setMaxWidth: setMaxWidth,
+    maxHeight: maxHeight,
+    setMaxHeight: setMaxHeight,
   };
 
   //dimensions of image
@@ -47,6 +53,8 @@ function App() {
         width: myRef.current.offsetWidth,
         height: myRef.current.offsetHeight,
       });
+      setMaxWidth(myRef.current.offsetWidth);
+      setMaxHeight(myRef.current.offsetHeight);
     }
     //Check if we resize image and remove on cleanup
     window.addEventListener("resize", updateDimensions);

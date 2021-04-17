@@ -20,6 +20,7 @@ function ClipGrid({ canvasLines, imgBlob, canvasContextHandler }) {
   //-----------------------------------
 
   //todo fix where to place end point if current col doesnt have a bottom row.
+  //Optimize row col matching. No need to match every row against every col.
   //-----------------------------------
   if (clicked) {
     /* Drawing points are used to determine where to draw boxes. We want to create boxes using the top left coords
@@ -27,7 +28,7 @@ function ClipGrid({ canvasLines, imgBlob, canvasContextHandler }) {
      */
 
     function createCoordinates() {
-      const MAX_DIFF = 10;
+      const MAX_DIFF = 15;
       //min and max coordinates will always be a drawing point.
       let validCoords = [];
 
@@ -38,8 +39,8 @@ function ClipGrid({ canvasLines, imgBlob, canvasContextHandler }) {
       let validRows = canvasLines.filter(
         (line) => line.deleted === false && line.isRow === true,
       );
-      // console.log(validCols);
-      // console.log("rows", validRows);
+      console.log(validCols);
+      console.log("rows", validRows);
 
       for (let i = 0; i < validCols.length; i++) {
         const currentCol = validCols[i];
@@ -66,10 +67,11 @@ function ClipGrid({ canvasLines, imgBlob, canvasContextHandler }) {
     }
 
     let validCoords = createCoordinates();
-    console.log(validCoords);
     let img = new Image();
     img.src = imgBlob;
     let ctx = canvasContextHandler();
+    // ctx.clearRect(0, 0, width, height); // if ctx is not null.
+
     // const ctx = canvasRef.current.getContext("2d");
     console.log(ctx);
     //find next col and row with smallest x+width  and col with smallest y >= current y + height.
@@ -126,15 +128,14 @@ function containsRow(rowType, currentCol, rows, cols, MAX_DIFF) {
       let xDiff = Math.abs(
         currentRow.coords.x +
           currentRow.coords.width -
-          currentCol.coords.x +
-          currentCol.coords.width,
+          (currentCol.coords.x + currentCol.coords.width),
       );
       let yDiff = Math.abs(
         currentRow.coords.y +
           currentRow.coords.height -
-          currentCol.coords.y +
-          currentCol.coords.height,
+          (currentCol.coords.y + currentCol.coords.height),
       );
+
       if (xDiff <= MAX_DIFF && yDiff <= MAX_DIFF) {
         return true;
       }
