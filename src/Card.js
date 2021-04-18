@@ -2,7 +2,7 @@
 import { useDrag } from "react-dnd";
 import { ItemTypes } from "./ItemTypes";
 
-function Card({ id }) {
+function Card({ id, dimensions }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.CARD,
     item: { id },
@@ -17,8 +17,12 @@ function Card({ id }) {
       style={{
         display: "inline-block",
         backgroundColor: "red",
-        height: "100px",
-        width: "100px",
+        // height: "100px",
+        // width: "100px",
+        top: dimensions.yStart,
+        left: dimensions.xStart,
+        height: dimensions.yEnd - dimensions.yStart,
+        width: dimensions.xEnd - dimensions.xStart,
         zIndex: "2",
       }}
     >

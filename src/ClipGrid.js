@@ -60,14 +60,15 @@ function ClipGrid({
           if (
             containsRow("BOTTOM", nextCol, validRows, sameIndexCols, MAX_DIFF)
           ) {
-            validCoords.push({
+            let dimensions = {
               xStart: currentCol.coords.x,
               yStart: currentCol.coords.y,
               xEnd: nextCol.coords.x,
               yEnd: nextCol.coords.y + nextCol.coords.height,
               id: key,
-            });
-            cards.current.push(key);
+            };
+            validCoords.push(dimensions);
+            cards.current.push(dimensions);
             key++;
           }
         }
@@ -114,6 +115,7 @@ function ClipGrid({
     img.src = imgBlob;
     let ctx = canvasContextHandler();
     setDisplayCanvas(false);
+    console.log(img);
     // if (ctx !== undefined) {
     //   console.log("a");
     //   ctx.clearRect(0, 0, width, height); // if ctx is not null.
@@ -140,7 +142,7 @@ function ClipGrid({
             );
           }};  */}
         {/* <> */}
-        {validCoords.map((coordinate, i) => {
+        {validCoords.map((coordinate) => {
           const dimensions = {
             xStart: coordinate.xStart,
             yStart: coordinate.yStart,
@@ -155,21 +157,23 @@ function ClipGrid({
             />
           );
         })}
-        <Carousel className="Carousel" itemsToShow={3} itemsToScroll={1}>
-          {cards.current.map((id) => {
-            return <Card key={id} id={id}></Card>;
+        <Carousel className="Carousel" itemsToShow={2} itemsToScroll={2}>
+          {cards.current.map((coordinate) => {
+            const dimensions = {
+              xStart: coordinate.xStart,
+              yStart: coordinate.yStart,
+              xEnd: coordinate.xEnd,
+              yEnd: coordinate.yEnd,
+            };
+            return (
+              <Card
+                key={coordinate.id}
+                id={coordinate.id}
+                dimensions={dimensions}
+              ></Card>
+            );
           })}
-          {console.log(cards)}
-
-          {/* <Card id={1} />
-          <Card id={5} />
-          <Card id={2} />
-          <Card id={3} />
-          <Card id={4} /> */}
         </Carousel>
-        {/* </> */}
-        {/* <Square id="1" width={width} height={height} /> */}
-        {/* <Card id="1" width={width} height={height} /> */}
       </>
     );
   }
