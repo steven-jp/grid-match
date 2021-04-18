@@ -79,8 +79,12 @@
   transform: translate(75%, -100%);
 }
 
+.Carousel {
+  position: absolute;
+  transform: translateY(10%);
+}
 /* ================ Clipped grid elements ================*/
-
+/* 
 #Card {
   display: absolute;
   z-index: 33;
@@ -88,4 +92,4 @@
 #Square {
   display: absolute;
   z-index: 33;
-}
+} */

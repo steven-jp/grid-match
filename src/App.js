@@ -112,17 +112,7 @@ function App() {
 
   function AddGrid() {
     if (renderGrid === true) {
-      return (
-        <Grid
-          // width={dimensions.width}
-          // height={dimensions.height}
-          // rows={gridDimensions.rows}
-          // cols={gridDimensions.cols}
-          imgBlob={file}
-          renderGridHandler={renderGridHandler}
-          // renderCards={renderCards}
-        />
-      );
+      return <Grid imgBlob={file} renderGridHandler={renderGridHandler} />;
     }
     return null;
   }
@@ -173,6 +163,19 @@ function App() {
             <AddGrid draggable="true" />
           </GridContext.Provider>
         </div>
+        {/*     
+        <Carousel itemsToShow={3} itemsToScroll={1}>
+          {cards.current.map((card) => {
+            return <Card>{card}</Card>;
+          })}
+          {console.log(cards)}
+
+           <Card id={1} />
+          <Card id={5} />
+          <Card id={2} />
+          <Card id={3} />
+          <Card id={4} /> 
+        </Carousel> */}
       </div>
     </DndProvider>
   );

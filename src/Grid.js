@@ -10,6 +10,7 @@ function Grid({ imgBlob, renderGridHandler }) {
 
   const [createdPreviously, setCreatedPreviously] = useState(false);
   const [deleteClicked, setDeleteClicked] = useState(false);
+  const [displayCanvas, setDisplayCanvas] = useState(true);
   const gridContext = useContext(GridContext);
   let width = gridContext.dimensions.width;
   let height = gridContext.dimensions.height;
@@ -34,7 +35,6 @@ function Grid({ imgBlob, renderGridHandler }) {
     const ctx = canvasRef.current.getContext("2d");
     createGrid(ctx);
     setRenderContext(ctx);
-    console.log(maxWidth, maxHeight);
   }, [canvasLines]); // changed from [canvasLines.current]
 
   // const mem = useMemo(() => {
@@ -306,7 +306,6 @@ function Grid({ imgBlob, renderGridHandler }) {
     calculateGridSize();
   };
 
-  console.log("here");
   return (
     <div>
       <ClipButton clipButtonHandler={renderGridHandler} />
@@ -317,18 +316,21 @@ function Grid({ imgBlob, renderGridHandler }) {
       <ClipGrid
         canvasLines={canvasLines.current}
         imgBlob={imgBlob}
+        setDisplayCanvas={setDisplayCanvas}
         canvasContextHandler={() => renderContext}
       />
-      <canvas
-        ref={canvasRef}
-        className="Grid"
-        width={width}
-        height={height}
-        onClick={onClickHandler}
-        onMouseDown={mouseDownHandler}
-        onMouseMove={mouseMoveHandler}
-        onMouseUp={mouseUpHandler}
-      ></canvas>
+      {displayCanvas ? (
+        <canvas
+          ref={canvasRef}
+          className="Grid"
+          width={width}
+          height={height}
+          onClick={onClickHandler}
+          onMouseDown={mouseDownHandler}
+          onMouseMove={mouseMoveHandler}
+          onMouseUp={mouseUpHandler}
+        ></canvas>
+      ) : null}
     </div>
   );
 }

@@ -24,6 +24,7 @@ function Square({ id, dimensions }) {
   return (
     <div
       ref={drop}
+      // onDrop={(e) => e.stopPropagation()}
       style={{
         display: "inline-block",
         backgroundColor: isOver ? "green" : "blue",

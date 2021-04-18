@@ -1,10 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import Square from "./Square";
 import Card from "./Card";
 import "./App.css";
 import { GridContext } from "./App";
+import Carousel from "react-elastic-carousel";
 
-function ClipGrid({ canvasLines, imgBlob, canvasContextHandler }) {
+function ClipGrid({
+  canvasLines,
+  imgBlob,
+  canvasContextHandler,
+  setDisplayCanvas,
+}) {
   // let img = new Image();
   // img.src = imgBlob;
   // img.onload = function () {
@@ -12,10 +18,10 @@ function ClipGrid({ canvasLines, imgBlob, canvasContextHandler }) {
   // };
 
   const gridContext = useContext(GridContext);
-  // let width = gridContext.dimensions.width;
+  let width = gridContext.dimensions.width;
+  let height = gridContext.dimensions.height;
   let clicked = gridContext.renderCards;
-  console.log("this should not be undefined on click: ", canvasLines[0]);
-  // let height = gridContext.dimensions.height;
+  let cards = useRef([]);
 
   //-----------------------------------
 
@@ -31,7 +37,7 @@ function ClipGrid({ canvasLines, imgBlob, canvasContextHandler }) {
       const MAX_DIFF = 15;
       //min and max coordinates will always be a drawing point.
       let validCoords = [];
-
+      cards.current = [];
       let validCols = canvasLines.filter(
         (line) => line.deleted === false && line.isRow === false,
       );
@@ -39,9 +45,9 @@ function ClipGrid({ canvasLines, imgBlob, canvasContextHandler }) {
       let validRows = canvasLines.filter(
         (line) => line.deleted === false && line.isRow === true,
       );
-      console.log(validCols);
-      console.log("rows", validRows);
-
+      // console.log(validCols);
+      // console.log("rows", validRows);
+      let key = 0;
       for (let i = 0; i < validCols.length; i++) {
         const currentCol = validCols[i];
         let a = containsRow("TOP", currentCol, validRows, null, MAX_DIFF);
@@ -59,18 +65,59 @@ function ClipGrid({ canvasLines, imgBlob, canvasContextHandler }) {
               yStart: currentCol.coords.y,
               xEnd: nextCol.coords.x,
               yEnd: nextCol.coords.y + nextCol.coords.height,
+              id: key,
             });
+            cards.current.push(key);
+            key++;
           }
         }
       }
       return validCoords;
     }
 
+    function containsRow(rowType, currentCol, rows, cols, MAX_DIFF) {
+      for (let i = 0; i < rows.length; i++) {
+        const currentRow = rows[i];
+        //Checking from left corner
+        if (rowType === "TOP") {
+          let xDiff = Math.abs(currentRow.coords.x - currentCol.coords.x);
+          let yDiff = Math.abs(currentRow.coords.y - currentCol.coords.y);
+
+          if (xDiff <= MAX_DIFF && yDiff <= MAX_DIFF) {
+            return true;
+          }
+        }
+        //checking bottom right corner in while loop
+        if (rowType === "BOTTOM") {
+          let xDiff = Math.abs(
+            currentRow.coords.x +
+              currentRow.coords.width -
+              (currentCol.coords.x + currentCol.coords.width),
+          );
+          let yDiff = Math.abs(
+            currentRow.coords.y +
+              currentRow.coords.height -
+              (currentCol.coords.y + currentCol.coords.height),
+          );
+
+          if (xDiff <= MAX_DIFF && yDiff <= MAX_DIFF) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
     let validCoords = createCoordinates();
     let img = new Image();
     img.src = imgBlob;
     let ctx = canvasContextHandler();
-    // ctx.clearRect(0, 0, width, height); // if ctx is not null.
+    setDisplayCanvas(false);
+    // if (ctx !== undefined) {
+    //   console.log("a");
+    //   ctx.clearRect(0, 0, width, height); // if ctx is not null.
+    // }
 
     // const ctx = canvasRef.current.getContext("2d");
     console.log(ctx);
@@ -100,49 +147,33 @@ function ClipGrid({ canvasLines, imgBlob, canvasContextHandler }) {
             xEnd: coordinate.xEnd,
             yEnd: coordinate.yEnd,
           };
-          return <Square key={i} dimensions={dimensions} />;
+          return (
+            <Square
+              key={coordinate.id}
+              id={coordinate.id}
+              dimensions={dimensions}
+            />
+          );
         })}
-        ;{/* </> */}
+        <Carousel className="Carousel" itemsToShow={3} itemsToScroll={1}>
+          {cards.current.map((id) => {
+            return <Card key={id} id={id}></Card>;
+          })}
+          {console.log(cards)}
+
+          {/* <Card id={1} />
+          <Card id={5} />
+          <Card id={2} />
+          <Card id={3} />
+          <Card id={4} /> */}
+        </Carousel>
+        {/* </> */}
         {/* <Square id="1" width={width} height={height} /> */}
         {/* <Card id="1" width={width} height={height} /> */}
       </>
     );
   }
   return null;
-}
-
-function containsRow(rowType, currentCol, rows, cols, MAX_DIFF) {
-  for (let i = 0; i < rows.length; i++) {
-    const currentRow = rows[i];
-    //Checking from left corner
-    if (rowType === "TOP") {
-      let xDiff = Math.abs(currentRow.coords.x - currentCol.coords.x);
-      let yDiff = Math.abs(currentRow.coords.y - currentCol.coords.y);
-
-      if (xDiff <= MAX_DIFF && yDiff <= MAX_DIFF) {
-        return true;
-      }
-    }
-    //checking bottom right corner in while loop
-    if (rowType === "BOTTOM") {
-      let xDiff = Math.abs(
-        currentRow.coords.x +
-          currentRow.coords.width -
-          (currentCol.coords.x + currentCol.coords.width),
-      );
-      let yDiff = Math.abs(
-        currentRow.coords.y +
-          currentRow.coords.height -
-          (currentCol.coords.y + currentCol.coords.height),
-      );
-
-      if (xDiff <= MAX_DIFF && yDiff <= MAX_DIFF) {
-        return true;
-      }
-    }
-  }
-
-  return false;
 }
 
 export default ClipGrid;
