@@ -18,8 +18,6 @@ function ClipGrid({
   // };
 
   const gridContext = useContext(GridContext);
-  let width = gridContext.dimensions.width;
-  let height = gridContext.dimensions.height;
   let clicked = gridContext.renderCards;
   let cards = useRef([]);
 
@@ -111,18 +109,17 @@ function ClipGrid({
     }
 
     let validCoords = createCoordinates();
-    let img = new Image();
-    img.src = imgBlob;
-    let ctx = canvasContextHandler();
+    // let img = new Image();
+    // img.src = imgBlob;
+    // let ctx = canvasContextHandler();
     setDisplayCanvas(false);
-    console.log(img);
+    // console.log(img);
     // if (ctx !== undefined) {
     //   console.log("a");
     //   ctx.clearRect(0, 0, width, height); // if ctx is not null.
     // }
 
     // const ctx = canvasRef.current.getContext("2d");
-    console.log(ctx);
     //find next col and row with smallest x+width  and col with smallest y >= current y + height.
     return (
       <>
@@ -170,6 +167,7 @@ function ClipGrid({
                 key={coordinate.id}
                 id={coordinate.id}
                 dimensions={dimensions}
+                imgBlob={imgBlob}
               ></Card>
             );
           })}

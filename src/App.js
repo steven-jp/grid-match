@@ -20,7 +20,7 @@ function App() {
     rows: "3",
     cols: "3",
   });
-  const [renderImage, setRenderImage] = useState(false); // show image before grid form. remove after clipping.
+  const [showImage, setShowImage] = useState(false); // show image before grid form. hide after clipping.
   const [renderCards, setRenderCards] = useState(false); // used to render cards after clip grid button pressed.
   const [renderButtons, setRenderButtons] = useState({
     delete: true,
@@ -36,7 +36,7 @@ function App() {
   //Global variables object
   const ContextValue = {
     renderCards: renderCards,
-    renderImage: renderImage,
+    showImage: showImage,
     gridDimensions: gridDimensions, //.width, .height
     dimensions: dimensions, // .rows, .cols
     renderButtons: renderButtons, //.clip, .grid
@@ -106,7 +106,7 @@ function App() {
       setFile(URL.createObjectURL(files[0]));
       setText("");
       setRenderForm(true);
-      setRenderImage(true);
+      setShowImage(true);
     }
   };
 
@@ -129,7 +129,7 @@ function App() {
     return null;
   }
   function AddUserImage() {
-    if (renderImage === true) {
+    if (showImage === true) {
       return <img className="user-image" src={file} alt="" />;
     }
     return null;
@@ -139,7 +139,7 @@ function App() {
   // We do this to display image on drop before grid form is displayed.
   function renderGridHandler() {
     console.log("clicked");
-    setRenderImage(false);
+    setShowImage(false);
     setRenderCards(true);
     setRenderButtons(false);
   }

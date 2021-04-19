@@ -1,8 +1,10 @@
-// import "./Square.css";
+import "./App.css";
+import { useContext } from "react";
 import { useDrag } from "react-dnd";
 import { ItemTypes } from "./ItemTypes";
+import { GridContext } from "./App";
 
-function Card({ id, dimensions }) {
+function Card({ id, dimensions, imgBlob }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.CARD,
     item: { id },
@@ -10,6 +12,34 @@ function Card({ id, dimensions }) {
       isDragging: !!monitor.isDragging(),
     }),
   }));
+  //get width and height of original image to determine where to show viewbox.
+  const gridContext = useContext(GridContext);
+  let width = gridContext.dimensions.width;
+  let height = gridContext.dimensions.height;
+
+  function DisplayCard() {
+    let viewBoxValues =
+      dimensions.xStart +
+      " " +
+      dimensions.yStart +
+      " " +
+      (dimensions.xEnd - dimensions.xStart) +
+      " " +
+      (dimensions.yEnd - dimensions.yStart);
+
+    return (
+      <svg viewBox={viewBoxValues}>
+        <image
+          className="card-image"
+          xlinkHref={imgBlob}
+          style={{
+            width: { width },
+            height: { height },
+          }}
+        />
+      </svg>
+    );
+  }
 
   return (
     <div
@@ -17,8 +47,6 @@ function Card({ id, dimensions }) {
       style={{
         display: "inline-block",
         backgroundColor: "red",
-        // height: "100px",
-        // width: "100px",
         top: dimensions.yStart,
         left: dimensions.xStart,
         height: dimensions.yEnd - dimensions.yStart,
@@ -26,7 +54,7 @@ function Card({ id, dimensions }) {
         zIndex: "2",
       }}
     >
-      <h1>Card</h1>
+      <DisplayCard />
     </div>
   );
 }
