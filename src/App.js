@@ -28,6 +28,8 @@ function App() {
   });
   const [maxWidth, setMaxWidth] = useState(dimensions.width);
   const [maxHeight, setMaxHeight] = useState(dimensions.height);
+  const [minWidth, setMinWidth] = useState(0);
+  const [minHeight, setMinHeight] = useState(0);
 
   // This components hooks
   const [renderForm, setRenderForm] = useState(false); // Renders user input for grid.
@@ -44,6 +46,10 @@ function App() {
     setMaxWidth: setMaxWidth,
     maxHeight: maxHeight,
     setMaxHeight: setMaxHeight,
+    minWidth: minWidth,
+    setMinWidth: setMinWidth,
+    minHeight: minHeight,
+    setMinHeight: setMinHeight,
   };
 
   //dimensions of image
@@ -129,10 +135,10 @@ function App() {
     return null;
   }
   function AddUserImage() {
-    if (showImage === true) {
-      return <img className="user-image" src={file} alt="" />;
-    }
-    return null;
+    // if (showImage === true) {
+    return <img className="user-image" src={file} alt="" />;
+    // }
+    // return null;
   }
 
   //child component calls this to remove image from grid. We set '
@@ -163,19 +169,6 @@ function App() {
             <AddGrid draggable="true" />
           </GridContext.Provider>
         </div>
-        {/*     
-        <Carousel itemsToShow={3} itemsToScroll={1}>
-          {cards.current.map((card) => {
-            return <Card>{card}</Card>;
-          })}
-          {console.log(cards)}
-
-           <Card id={1} />
-          <Card id={5} />
-          <Card id={2} />
-          <Card id={3} />
-          <Card id={4} /> 
-        </Carousel> */}
       </div>
     </DndProvider>
   );

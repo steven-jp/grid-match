@@ -1,6 +1,4 @@
-// import "./Square.css";
 import { useDrop } from "react-dnd";
-import { useContext } from "react";
 import { ItemTypes } from "./ItemTypes";
 
 function Square({ id, dimensions }) {
@@ -32,7 +30,8 @@ function Square({ id, dimensions }) {
         left: dimensions.xStart,
         height: dimensions.yEnd - dimensions.yStart,
         width: dimensions.xEnd - dimensions.xStart,
-        zIndex: "1",
+        zIndex: 500,
+        position: "absolute",
       }}
     >
       <h1>Square</h1>

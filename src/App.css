@@ -1,5 +1,5 @@
 .App {
-  background-color: rgb(216, 83, 83);
+  background-color: rgb(191, 210, 255);
   text-align: center;
   /* display: inline-block; */
   height: 100vh;
@@ -28,6 +28,7 @@
   position: absolute;
   top: 0px;
   left: 0px;
+  z-index: 0;
 }
 
 /* ================Row col grid form================*/
@@ -45,6 +46,7 @@
   gap: 5px;
   justify-content: center;
   position: absolute;
+  z-index: 2;
 }
 .grid-form,
 .grid-form input {
@@ -58,7 +60,7 @@
 
 .Grid {
   position: absolute;
-  z-index: 100;
+  z-index: 3;
   top: 0px;
   left: 0px;
 }
@@ -83,13 +85,3 @@
   position: absolute;
   transform: translateY(10%);
 }
-/* ================ Clipped grid elements ================*/
-/* 
-#Card {
-  display: absolute;
-  z-index: 33;
-}
-#Square {
-  display: absolute;
-  z-index: 33;
-} */

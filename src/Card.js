@@ -1,4 +1,3 @@
-import "./App.css";
 import { useContext } from "react";
 import { useDrag } from "react-dnd";
 import { ItemTypes } from "./ItemTypes";
@@ -51,7 +50,8 @@ function Card({ id, dimensions, imgBlob }) {
         left: dimensions.xStart,
         height: dimensions.yEnd - dimensions.yStart,
         width: dimensions.xEnd - dimensions.xStart,
-        zIndex: "2",
+        // zIndex: 555,
+        // position: "relative",
       }}
     >
       <DisplayCard />

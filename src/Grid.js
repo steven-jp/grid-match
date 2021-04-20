@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo, useContext } from "react";
+import React, { useRef, useState, useEffect, useContext } from "react";
 import DeleteButton from "./buttons/DeleteButton";
 import ClipButton from "./buttons/ClipButton";
 import ClipGrid from "./ClipGrid";
@@ -12,22 +12,21 @@ function Grid({ imgBlob, renderGridHandler }) {
   const [deleteClicked, setDeleteClicked] = useState(false);
   const [displayCanvas, setDisplayCanvas] = useState(true);
   const gridContext = useContext(GridContext);
+  // Dimensions of canvas
   let width = gridContext.dimensions.width;
   let height = gridContext.dimensions.height;
+  //Amount of rows and columns in grid.
   let rows = gridContext.gridDimensions.rows;
   let cols = gridContext.gridDimensions.cols;
-  let renderButtons = gridContext.renderButtons;
+  //Keep track of where to place grid and squares on canvas
   let maxWidth = gridContext.maxWidth;
   let setMaxWidth = gridContext.setMaxWidth;
-
   let maxHeight = gridContext.maxHeight;
   let setMaxHeight = gridContext.setMaxHeight;
-
-  // const [maxWidth, setMaxWidth] = useState(width);
-  // const [maxHeight, setMaxHeight] = useState(height);
-
-  // let renderCards = gridContext.renderCards;
-  // let setRenderCards = gridContext.setRenderCards;
+  let minHeight = gridContext.minHeight;
+  let setMinHeight = gridContext.setMinHeight;
+  let minWidth = gridContext.minWidth;
+  let setMinWidth = gridContext.setMinWidth;
 
   const [renderContext, setRenderContext] = useState(null); // fix this
 
@@ -37,20 +36,22 @@ function Grid({ imgBlob, renderGridHandler }) {
     setRenderContext(ctx);
   }, [canvasLines]); // changed from [canvasLines.current]
 
-  // const mem = useMemo(() => {
-  //   return canvasLines;
-  // }, [canvasLines]);
-
   function calculateGridSize() {
-    let x = 0,
-      y = 0;
+    let maxX = 0,
+      minX = Number.MAX_VALUE,
+      maxY = 0,
+      minY = Number.MAX_VALUE;
     canvasLines.current.forEach((line) => {
-      x = Math.max(x, line.coords.x + line.coords.width);
-      y = Math.max(y, line.coords.y + line.coords.height);
+      maxX = Math.max(maxX, line.coords.x + line.coords.width);
+      maxY = Math.max(maxY, line.coords.y + line.coords.height);
+      minX = Math.min(minX, line.coords.x);
+      minY = Math.min(minY, line.coords.y);
     });
-    setMaxHeight(y);
-    setMaxWidth(x);
-    console.log(maxWidth, maxHeight);
+    setMaxHeight(maxY);
+    setMaxWidth(maxX);
+    setMinHeight(minY);
+    setMinWidth(minX);
+    console.log(canvasLines);
   }
 
   //---------------------------------------------
@@ -60,6 +61,8 @@ function Grid({ imgBlob, renderGridHandler }) {
     -- if u resize the window then it removes the boxes
     -- if no more lines then crashes
   */
+  // clipping isn't working properly at correct location. off by a lil
+  //moving around grid causes issues sometimes where it creates extra columns/rows.
   /* todo: Fix rows to look like columns */
   //---------------------------------------------
 
@@ -68,8 +71,8 @@ function Grid({ imgBlob, renderGridHandler }) {
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     //used to determine how big each line will be for grid.
     const lineSize = 5;
-    const lineX = maxWidth / cols;
-    const lineY = maxHeight / rows;
+    const lineX = (maxWidth - minWidth) / cols;
+    const lineY = (maxHeight - minHeight) / rows;
     //keep track of the current row/col for easy lookup on drag.
     let currentRow = 0;
     let currentCol = 0;
@@ -79,9 +82,9 @@ function Grid({ imgBlob, renderGridHandler }) {
     }
     //draw columns row at a time for when we check bounds in ClipGrid.
     let lastIndex = 0;
-    for (let y = 0; y < maxHeight; y += lineY) {
+    for (let y = minHeight; y < maxHeight; y += lineY) {
       currentCol = 0;
-      for (let x = 0; x < maxWidth; x += lineX) {
+      for (let x = minWidth; x < maxWidth; x += lineX) {
         createLine(x, y, lineSize, lineY, false, currentCol++, currentRow);
       }
       /* Draw right columns on edges of canvas to prevent 
@@ -102,9 +105,9 @@ function Grid({ imgBlob, renderGridHandler }) {
 
     currentRow = 0;
     //draw rows
-    for (let y = 0; y < maxHeight; y += lineY) {
+    for (let y = minHeight; y < maxHeight; y += lineY) {
       currentCol = 0;
-      for (let x = 0; x < maxWidth; x += lineX) {
+      for (let x = minWidth; x < maxWidth; x += lineX) {
         createLine(x, y, lineX, lineSize, true, currentRow, currentCol++);
       }
       currentRow++;
@@ -115,7 +118,7 @@ function Grid({ imgBlob, renderGridHandler }) {
 
     //Draw bottom row
     currentCol = 0;
-    for (let x = 0; x < maxWidth; x += lineX) {
+    for (let x = minWidth; x < maxWidth; x += lineX) {
       createLine(
         x,
         maxHeight - lineSize,
@@ -155,13 +158,6 @@ function Grid({ imgBlob, renderGridHandler }) {
     }
 
     draw(ctx);
-
-    //maybe add this to context and pass down to card/square ?
-    // let img = new Image();
-    // img.src = imgBlob;
-    // img.onload = function () {
-    //   ctx.drawImage(img, 0, 0, 44, 55, 0, 0, width, height);
-    // };
   };
 
   /* Update view of grid */
@@ -176,18 +172,18 @@ function Grid({ imgBlob, renderGridHandler }) {
   }
 
   const onClickHandler = (e) => {
-    const ctx = canvasRef.current.getContext("2d");
-    let bounds = canvasRef.current.getBoundingClientRect();
-    let x = e.clientX - bounds.left;
-    let y = e.clientY - bounds.top;
     if (deleteClicked) {
+      const ctx = canvasRef.current.getContext("2d");
+      let bounds = canvasRef.current.getBoundingClientRect();
+      let x = e.clientX - bounds.left;
+      let y = e.clientY - bounds.top;
       for (let i = 0; i < canvasLines.current.length; i++) {
         if (ctx.isPointInPath(canvasLines.current[i].path, x, y, "nonzero")) {
           canvasLines.current[i].deleted = true;
         }
       }
+      draw(ctx);
     }
-    draw(ctx);
   };
 
   /* =============Mouse movements for dragging lines=============*/

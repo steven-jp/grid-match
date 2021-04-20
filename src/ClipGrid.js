@@ -22,8 +22,8 @@ function ClipGrid({
   let cards = useRef([]);
 
   //-----------------------------------
-
   //todo fix where to place end point if current col doesnt have a bottom row.
+  //fix where carousel is positioned.
   //Optimize row col matching. No need to match every row against every col.
   //-----------------------------------
   if (clicked) {
@@ -154,7 +154,16 @@ function ClipGrid({
             />
           );
         })}
-        <Carousel className="Carousel" itemsToShow={2} itemsToScroll={2}>
+        <Carousel
+          className="Carousel"
+          itemsToShow={2}
+          itemsToScroll={2}
+          style={{
+            bottom: "-50%",
+            zIndex: 555,
+            // position: "relative",
+          }}
+        >
           {cards.current.map((coordinate) => {
             const dimensions = {
               xStart: coordinate.xStart,
