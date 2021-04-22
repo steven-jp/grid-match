@@ -6,9 +6,9 @@ import { GridContext } from "./App";
 
 function Grid({ imgBlob, renderGridHandler }) {
   const canvasRef = useRef(null);
-  const canvasLines = useRef([]);
+  // const canvasLines = useRef([]);
 
-  const [createdPreviously, setCreatedPreviously] = useState(false);
+  // const [createdPreviously, setCreatedPreviously] = useState(false);
   const [deleteClicked, setDeleteClicked] = useState(false);
   const [displayCanvas, setDisplayCanvas] = useState(true);
   const gridContext = useContext(GridContext);
@@ -27,13 +27,21 @@ function Grid({ imgBlob, renderGridHandler }) {
   let setMinHeight = gridContext.setMinHeight;
   let minWidth = gridContext.minWidth;
   let setMinWidth = gridContext.setMinWidth;
+  let createdPreviously = gridContext.createdPreviously;
+  let setCreatedPreviously = gridContext.setCreatedPreviously;
+  let canvasLines = gridContext.canvasLines;
 
   const [renderContext, setRenderContext] = useState(null); // fix this
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
-    createGrid(ctx);
     setRenderContext(ctx);
+    // only overwrite our canvas lines if they weren't created previously.
+    if (!createdPreviously) {
+      createGrid(ctx);
+    } else {
+      draw(ctx);
+    }
   }, [canvasLines]); // changed from [canvasLines.current]
 
   function calculateGridSize() {
@@ -47,23 +55,19 @@ function Grid({ imgBlob, renderGridHandler }) {
       minX = Math.min(minX, line.coords.x);
       minY = Math.min(minY, line.coords.y);
     });
-    setMaxHeight(maxY);
-    setMaxWidth(maxX);
-    setMinHeight(minY);
-    setMinWidth(minX);
-    console.log(canvasLines);
+    // setMaxHeight(maxY);
+    // setMaxWidth(maxX);
+    // setMinHeight(minY);
+    // setMinWidth(minX);
   }
 
   //---------------------------------------------
   /* Add test to determine if values are correct */
 
   /* BUG FIX NEEDED: if you draw a bunch then it will just look like a black square 
-    -- if u resize the window then it removes the boxes
     -- if no more lines then crashes
   */
   // clipping isn't working properly at correct location. off by a lil
-  //moving around grid causes issues sometimes where it creates extra columns/rows.
-  /* todo: Fix rows to look like columns */
   //---------------------------------------------
 
   /* create grid and add view */
@@ -76,10 +80,6 @@ function Grid({ imgBlob, renderGridHandler }) {
     //keep track of the current row/col for easy lookup on drag.
     let currentRow = 0;
     let currentCol = 0;
-    //if we have already created the grid we want to keep deleted items in respective spots.
-    if (canvasLines.current.length !== 0) {
-      setCreatedPreviously(true);
-    }
     //draw columns row at a time for when we check bounds in ClipGrid.
     let lastIndex = 0;
     for (let y = minHeight; y < maxHeight; y += lineY) {
@@ -141,23 +141,19 @@ function Grid({ imgBlob, renderGridHandler }) {
       let path = new Path2D();
       path.rect(x, y, lineWidth, lineHeight);
 
-      // If line object was already created, only update path
-      if (createdPreviously === true) {
-        canvasLines.current[index].path = path;
-      } else {
-        let line = {
-          isRow: isRow,
-          deleted: false,
-          path: path,
-          coords: { x: x, y: y, width: lineWidth, height: lineHeight },
-          index: index,
-          oppositeAxisIndex: oppositeAxisIndex,
-        };
-        canvasLines.current.push(line);
-      }
+      let line = {
+        isRow: isRow,
+        deleted: false,
+        path: path,
+        coords: { x: x, y: y, width: lineWidth, height: lineHeight },
+        index: index,
+        oppositeAxisIndex: oppositeAxisIndex,
+      };
+      canvasLines.current.push(line);
     }
 
     draw(ctx);
+    setCreatedPreviously(true);
   };
 
   /* Update view of grid */
@@ -187,8 +183,8 @@ function Grid({ imgBlob, renderGridHandler }) {
   };
 
   /* =============Mouse movements for dragging lines=============*/
-  let startX = 0,
-    startY = 0,
+  let startX = minWidth,
+    startY = minHeight,
     gridLines = {
       moving: false,
       current: [],
@@ -291,8 +287,8 @@ function Grid({ imgBlob, renderGridHandler }) {
   //disable grid movement.
   const mouseUpHandler = (e) => {
     e.preventDefault();
-    startX = 0;
-    startY = 0;
+    // startX = 0;
+    // startY = 0;
     gridLines = {
       moving: false,
       current: [],

@@ -30,6 +30,8 @@ function App() {
   const [maxHeight, setMaxHeight] = useState(dimensions.height);
   const [minWidth, setMinWidth] = useState(0);
   const [minHeight, setMinHeight] = useState(0);
+  const [createdPreviously, setCreatedPreviously] = useState(false);
+  const canvasLines = useRef([]);
 
   // This components hooks
   const [renderForm, setRenderForm] = useState(false); // Renders user input for grid.
@@ -50,6 +52,9 @@ function App() {
     setMinWidth: setMinWidth,
     minHeight: minHeight,
     setMinHeight: setMinHeight,
+    createdPreviously: createdPreviously,
+    setCreatedPreviously: setCreatedPreviously,
+    canvasLines: canvasLines,
   };
 
   //dimensions of image
