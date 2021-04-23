@@ -1,16 +1,26 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useDrag } from "react-dnd";
 import { ItemTypes } from "./ItemTypes";
 import { GridContext } from "./App";
 
 function Card({ id, dimensions, imgBlob }) {
+  const [validAnswer, setValidAnswer] = useState(false);
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.CARD,
     item: { id },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
+    end: (item, monitor) => validDrop(monitor),
   }));
+
+  //Check for a matching square.
+  function validDrop(monitor) {
+    if (monitor.getDropResult()) {
+      let correct = monitor.getDropResult().correct;
+      if (correct) setValidAnswer(true);
+    }
+  }
   //get width and height of original image to determine where to show viewbox.
   const gridContext = useContext(GridContext);
   let width = gridContext.dimensions.width;
@@ -41,20 +51,24 @@ function Card({ id, dimensions, imgBlob }) {
   }
 
   return (
-    <div
-      ref={drag}
-      style={{
-        display: "inline-block",
-        backgroundColor: "red",
-        top: dimensions.yStart,
-        left: dimensions.xStart,
-        height: dimensions.yEnd - dimensions.yStart,
-        width: dimensions.xEnd - dimensions.xStart,
-        // zIndex: 555,
-        // position: "relative",
-      }}
-    >
-      <DisplayCard />
+    <div>
+      {!validAnswer ? (
+        <div
+          ref={drag}
+          style={{
+            display: "inline-block",
+            backgroundColor: "red",
+            top: dimensions.yStart,
+            left: dimensions.xStart,
+            height: dimensions.yEnd - dimensions.yStart,
+            width: dimensions.xEnd - dimensions.xStart,
+            // zIndex: 555,
+            // position: "relative",
+          }}
+        >
+          <DisplayCard />
+        </div>
+      ) : null}
     </div>
   );
 }

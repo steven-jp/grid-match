@@ -43,8 +43,6 @@ function ClipGrid({
       let validRows = canvasLines.filter(
         (line) => line.deleted === false && line.isRow === true,
       );
-      // console.log(validCols);
-      // console.log("rows", validRows);
       let key = 0;
       for (let i = 0; i < validCols.length; i++) {
         const currentCol = validCols[i];
@@ -71,6 +69,7 @@ function ClipGrid({
           }
         }
       }
+      shuffle(cards.current);
       return validCoords;
     }
 
@@ -109,36 +108,9 @@ function ClipGrid({
     }
 
     let validCoords = createCoordinates();
-    // let img = new Image();
-    // img.src = imgBlob;
-    // let ctx = canvasContextHandler();
     setDisplayCanvas(false);
-    // console.log(img);
-    // if (ctx !== undefined) {
-    //   console.log("a");
-    //   ctx.clearRect(0, 0, width, height); // if ctx is not null.
-    // }
-
-    // const ctx = canvasRef.current.getContext("2d");
-    //find next col and row with smallest x+width  and col with smallest y >= current y + height.
     return (
       <>
-        {/* <CreateGridElements /> */}
-        {/* {validCoords.forEach((coordinate, i) => {
-          {img.onload = function () {
-            ctx.drawImage(
-              img,
-              coordinate.xStart,
-              coordinate.yStart,
-              coordinate.xEnd,
-              coordinate.yEnd,
-              i * 20,
-              i * 20,
-              width + i * 20,
-              height + i * 20,
-            );
-          }};  */}
-        {/* <> */}
         {validCoords.map((coordinate) => {
           const dimensions = {
             xStart: coordinate.xStart,
@@ -185,6 +157,16 @@ function ClipGrid({
     );
   }
   return null;
+}
+
+// Fischer Yates Shuffle
+function shuffle(cards) {
+  for (let i = cards.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    let temp = cards[i];
+    cards[i] = cards[j];
+    cards[j] = temp;
+  }
 }
 
 export default ClipGrid;

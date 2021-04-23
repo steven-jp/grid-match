@@ -13,10 +13,11 @@ function Square({ id, dimensions }) {
 
   function validDrop(item) {
     if (item.id === id) {
-      console.log("true");
-    } else {
-      console.log("false");
+      alert("Correct");
+      return { correct: true };
     }
+    alert("Incorrect");
+    return { correct: false };
   }
 
   return (
@@ -25,7 +26,7 @@ function Square({ id, dimensions }) {
       // onDrop={(e) => e.stopPropagation()}
       style={{
         display: "inline-block",
-        backgroundColor: isOver ? "green" : "blue",
+        backgroundColor: isOver ? "rgb(173,149,149)" : "blue",
         top: dimensions.yStart,
         left: dimensions.xStart,
         height: dimensions.yEnd - dimensions.yStart,
