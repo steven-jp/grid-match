@@ -7,25 +7,19 @@ import Carousel from "react-elastic-carousel";
 
 function ClipGrid({
   canvasLines,
-  imgBlob,
-  canvasContextHandler,
+  // imgBlob,
+  // canvasContextHandler,
   setDisplayCanvas,
 }) {
-  // let img = new Image();
-  // img.src = imgBlob;
-  // img.onload = function () {
-  //   ctx.drawImage(img, 0, 0, 44, 55, 0, 0, width, height);
-  // };
-
   const gridContext = useContext(GridContext);
   let clicked = gridContext.renderCards;
   let cards = useRef([]);
-
   //-----------------------------------
   //todo fix where to place end point if current col doesnt have a bottom row.
   //fix where carousel is positioned.
   //Optimize row col matching. No need to match every row against every col.
   //-----------------------------------
+  // if (clicked && temp.length === 0) {
   if (clicked) {
     /* Drawing points are used to determine where to draw boxes. We want to create boxes using the top left coords
      Spanning to the bottom right coords of lines that have collisions. 
@@ -69,7 +63,7 @@ function ClipGrid({
           }
         }
       }
-      shuffle(cards.current);
+      // shuffle(cards.current);
       return validCoords;
     }
 
@@ -130,11 +124,11 @@ function ClipGrid({
           className="Carousel"
           itemsToShow={2}
           itemsToScroll={2}
-          style={{
-            bottom: "-50%",
-            zIndex: 555,
-            // position: "relative",
-          }}
+          // style={
+          //   {
+          //     // bottom: "-50%",
+          //   }
+          // }
         >
           {cards.current.map((coordinate) => {
             const dimensions = {
@@ -148,7 +142,7 @@ function ClipGrid({
                 key={coordinate.id}
                 id={coordinate.id}
                 dimensions={dimensions}
-                imgBlob={imgBlob}
+                // imgBlob={imgBlob}
               ></Card>
             );
           })}
@@ -160,6 +154,7 @@ function ClipGrid({
 }
 
 // Fischer Yates Shuffle
+// eslint-disable-next-line no-unused-vars
 function shuffle(cards) {
   for (let i = cards.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));

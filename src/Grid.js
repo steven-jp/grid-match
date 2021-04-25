@@ -4,11 +4,10 @@ import ClipButton from "./buttons/ClipButton";
 import ClipGrid from "./ClipGrid";
 import { GridContext } from "./App";
 
-function Grid({ imgBlob, renderGridHandler }) {
+function Grid({ renderGridHandler }) {
   const canvasRef = useRef(null);
   // const canvasLines = useRef([]);
 
-  // const [createdPreviously, setCreatedPreviously] = useState(false);
   const [deleteClicked, setDeleteClicked] = useState(false);
   const [displayCanvas, setDisplayCanvas] = useState(true);
   const gridContext = useContext(GridContext);
@@ -18,48 +17,22 @@ function Grid({ imgBlob, renderGridHandler }) {
   //Amount of rows and columns in grid.
   let rows = gridContext.gridDimensions.rows;
   let cols = gridContext.gridDimensions.cols;
-  //Keep track of where to place grid and squares on canvas
-  let maxWidth = gridContext.maxWidth;
-  let setMaxWidth = gridContext.setMaxWidth;
-  let maxHeight = gridContext.maxHeight;
-  let setMaxHeight = gridContext.setMaxHeight;
-  let minHeight = gridContext.minHeight;
-  let setMinHeight = gridContext.setMinHeight;
-  let minWidth = gridContext.minWidth;
-  let setMinWidth = gridContext.setMinWidth;
   let createdPreviously = gridContext.createdPreviously;
   let setCreatedPreviously = gridContext.setCreatedPreviously;
   let canvasLines = gridContext.canvasLines;
 
-  const [renderContext, setRenderContext] = useState(null); // fix this
+  // const [renderContext, setRenderContext] = useState(null); // fix this
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
-    setRenderContext(ctx);
-    // only overwrite our canvas lines if they weren't created previously.
+    // setRenderContext(ctx);
+    // only create out canvas lines if they weren't created yet.
     if (!createdPreviously) {
       createGrid(ctx);
     } else {
       draw(ctx);
     }
-  }, [canvasLines]); // changed from [canvasLines.current]
-
-  function calculateGridSize() {
-    let maxX = 0,
-      minX = Number.MAX_VALUE,
-      maxY = 0,
-      minY = Number.MAX_VALUE;
-    canvasLines.current.forEach((line) => {
-      maxX = Math.max(maxX, line.coords.x + line.coords.width);
-      maxY = Math.max(maxY, line.coords.y + line.coords.height);
-      minX = Math.min(minX, line.coords.x);
-      minY = Math.min(minY, line.coords.y);
-    });
-    // setMaxHeight(maxY);
-    // setMaxWidth(maxX);
-    // setMinHeight(minY);
-    // setMinWidth(minX);
-  }
+  }, [canvasRef]); // changed from [canvasLines.current]
 
   //---------------------------------------------
   /* Add test to determine if values are correct */
@@ -75,23 +48,23 @@ function Grid({ imgBlob, renderGridHandler }) {
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     //used to determine how big each line will be for grid.
     const lineSize = 5;
-    const lineX = (maxWidth - minWidth) / cols;
-    const lineY = (maxHeight - minHeight) / rows;
+    const lineX = (width - 0) / cols;
+    const lineY = (height - 0) / rows;
     //keep track of the current row/col for easy lookup on drag.
     let currentRow = 0;
     let currentCol = 0;
     //draw columns row at a time for when we check bounds in ClipGrid.
     let lastIndex = 0;
-    for (let y = minHeight; y < maxHeight; y += lineY) {
+    for (let y = 0; y < height; y += lineY) {
       currentCol = 0;
-      for (let x = minWidth; x < maxWidth; x += lineX) {
+      for (let x = 0; x < width; x += lineX) {
         createLine(x, y, lineSize, lineY, false, currentCol++, currentRow);
       }
       /* Draw right columns on edges of canvas to prevent 
           being out of bounds */
       if (currentCol === parseInt(cols)) {
         createLine(
-          maxWidth - lineSize,
+          width - lineSize,
           y,
           lineSize,
           lineY,
@@ -105,9 +78,9 @@ function Grid({ imgBlob, renderGridHandler }) {
 
     currentRow = 0;
     //draw rows
-    for (let y = minHeight; y < maxHeight; y += lineY) {
+    for (let y = 0; y < height; y += lineY) {
       currentCol = 0;
-      for (let x = minWidth; x < maxWidth; x += lineX) {
+      for (let x = 0; x < width; x += lineX) {
         createLine(x, y, lineX, lineSize, true, currentRow, currentCol++);
       }
       currentRow++;
@@ -118,10 +91,10 @@ function Grid({ imgBlob, renderGridHandler }) {
 
     //Draw bottom row
     currentCol = 0;
-    for (let x = minWidth; x < maxWidth; x += lineX) {
+    for (let x = 0; x < width; x += lineX) {
       createLine(
         x,
-        maxHeight - lineSize,
+        height - lineSize,
         lineX,
         lineSize,
         true,
@@ -174,17 +147,25 @@ function Grid({ imgBlob, renderGridHandler }) {
       let x = e.clientX - bounds.left;
       let y = e.clientY - bounds.top;
       for (let i = 0; i < canvasLines.current.length; i++) {
-        if (ctx.isPointInPath(canvasLines.current[i].path, x, y, "nonzero")) {
-          canvasLines.current[i].deleted = true;
+        let currentLine = canvasLines.current[i];
+        if (ctx.isPointInPath(currentLine.path, x, y, "nonzero")) {
+          // console.log(rows);
+          // if (
+          //   currentLine.index !== 0 &&
+          //   ((currentLine.isRow && currentLine.index !== rows) ||
+          //     (!currentLine.isRow && currentLine.index !== cols))
+          // ) {
+          currentLine.deleted = true;
         }
+        // }
       }
       draw(ctx);
     }
   };
 
   /* =============Mouse movements for dragging lines=============*/
-  let startX = minWidth,
-    startY = minHeight,
+  let startX = 0,
+    startY = 0,
     gridLines = {
       moving: false,
       current: [],
@@ -295,7 +276,6 @@ function Grid({ imgBlob, renderGridHandler }) {
       shrinking: [],
       expanding: [],
     };
-    calculateGridSize();
   };
 
   return (
@@ -307,9 +287,9 @@ function Grid({ imgBlob, renderGridHandler }) {
       />
       <ClipGrid
         canvasLines={canvasLines.current}
-        imgBlob={imgBlob}
+        // imgBlob={imgBlob}
         setDisplayCanvas={setDisplayCanvas}
-        canvasContextHandler={() => renderContext}
+        // canvasContextHandler={() => renderContext}
       />
       {displayCanvas ? (
         <canvas
