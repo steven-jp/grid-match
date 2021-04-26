@@ -20,7 +20,7 @@ function Grid({ renderGridHandler }) {
   let createdPreviously = gridContext.createdPreviously;
   let setCreatedPreviously = gridContext.setCreatedPreviously;
   let canvasLines = gridContext.canvasLines;
-
+  console.log(canvasLines);
   // const [renderContext, setRenderContext] = useState(null); // fix this
 
   useEffect(() => {

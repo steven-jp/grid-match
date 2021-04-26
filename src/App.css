@@ -83,12 +83,34 @@
   transform: translate(75%, -100%);
 }
 
-.Carousel {
+.rec-carousel-wrapper {
   z-index: 600;
   position: absolute;
-  /* transform: translate(-50%, -50%); */
   transform: translateY(70vh);
+
+  /* background-color: green; */
 }
+.rec-carousel {
+  /* background-color: blue; */
+}
+.rec-carousel-item {
+  /* background-color: red; */
+  /* height: 30vh; */
+  height: 700px;
+
+  /* width: 50px; */
+
+  /* display: "inline-block"; */
+}
+.rec-item-wrapper {
+  height: 100%;
+  width: 50%;
+
+  /* height: 300px; */
+}
+/* .rec-slider-container {
+  height: 100vh;
+} */
 
 /* @keyframes Carousel {
   0% {

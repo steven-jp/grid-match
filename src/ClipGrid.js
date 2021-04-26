@@ -121,9 +121,10 @@ function ClipGrid({
           );
         })}
         <Carousel
-          className="Carousel"
-          itemsToShow={2}
-          itemsToScroll={2}
+          itemsToShow={1}
+          itemsToScroll={1}
+          itemPadding={[10]}
+
           // style={
           //   {
           //     // bottom: "-50%",

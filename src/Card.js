@@ -33,50 +33,76 @@ function Card({ id, dimensions }) {
       (dimensions.xEnd - dimensions.xStart) +
       " " +
       (dimensions.yEnd - dimensions.yStart);
+
+    // determine what to expand to keep same aspect ratio.
+
+    let svgStyles = {};
+    let cardWidthRatio = dimensions.xEnd - dimensions.xStart;
+    let cardHeightRatio = dimensions.yEnd - dimensions.yStart;
+    cardWidthRatio > cardHeightRatio
+      ? (svgStyles.width = "100%")
+      : (svgStyles.height = "100%");
+    svgStyles.width = "";
+
+    // let parentWidth = 1,
+    //   parentHeight = 1;
+    // //how much do i expand the highest percentage difference to make the smallest fit.
+    // let svgStyles = {};
+    // let cardWidthRatio = parentWidth / (dimensions.xEnd - dimensions.xStart);
+    // let cardHeightRatio = parentHeight / (dimensions.yEnd - dimensions.yStart);
+    // cardWidthRatio > cardHeightRatio
+    //   ? (svgStyles.width = "100%")
+    //   : (svgStyles.height = "100%");
+    // svgStyles.width = "";
+
     return (
       //Show specific view of image used in
       <svg
         viewBox={viewBoxValues}
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
+        // style={
+        //   {
+        //     // maxWidth: "100%",
+        //     // height: "auto",
+        //     // maxWidth: "100%",
+        //     // maxHeight: "100%",
+        //   }
+        // }
+        style={svgStyles}
       >
+        {/* <rect x="0" y="0" width="100%" height="100%" fill="#FEDA00"></rect> */}
         <image
           className="card-image"
           xlinkHref={imgBlob}
           style={{
             width: width,
             height: height,
+            // preserveAspectRatio: "xMinYMin slice",
           }}
         />
       </svg>
     );
   }
-
   return (
     //height in carousel container.
-    <div
-      style={{
-        maxHeight: "50%",
-        maxWidth: "50%",
-      }}
-    >
+    <>
       {!validAnswer ? (
         //Card properties
         <div
           ref={drag}
           style={{
-            borderRadius: "5px",
-            border: "dashed",
-            // height: "100%",
-            // width: "100%",
+            // borderRadius: "5px",
+            // border: "dashed",
+            height: "50%",
+            width: "50%",
+
+            // maxWidth: "100%",
+            // maxHeight: "100%",
           }}
         >
           <DisplayCard />
         </div>
       ) : null}
-    </div>
+    </>
   );
 }
 
