@@ -9,6 +9,7 @@ import React, {
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Grid from "./Grid";
+import ResetButton from "./buttons/ResetButton";
 import GridForm from "./GridForm";
 
 // fix bug with dropping multiple images. re brings up the forms
@@ -35,8 +36,8 @@ function App() {
     clip: true,
   });
   const [createdPreviously, setCreatedPreviously] = useState(false);
-  const canvasLines = useRef([]);
-
+  let canvasLines = useRef([]);
+  const [text, setText] = useState("Drag Image Here");
   // This components hooks
   const [renderForm, setRenderForm] = useState(false); // Renders user input for grid.
   const [renderGrid, setRenderGrid] = useState(false); //displays grid if we have user input
@@ -113,7 +114,6 @@ function App() {
   }
 
   //Handle image uploads to main-grid.
-  const [text, setText] = useState("Drag Image Here");
   const fileUpload = (e) => {
     e.preventDefault();
     let files = e.dataTransfer.files;
@@ -156,9 +156,27 @@ function App() {
     setRenderButtons(false);
   }
 
+  //reset grid match to original state.
+  function resetGrid() {
+    setGridDimensions({ rows: "3", cols: "3" });
+    imgDimensions.current = { width: 0, height: 0 };
+    setRenderCards(false);
+    setRenderButtons({
+      delete: true,
+      clip: true,
+    });
+    setCreatedPreviously(false);
+    canvasLines.current = [];
+    setRenderForm(false);
+    setRenderGrid(false);
+    setFile(null);
+    setText("Drag Image Here");
+  }
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="App">
+        <ResetButton resetGrid={resetGrid} />
         <div
           ref={myRef}
           className="main-grid"

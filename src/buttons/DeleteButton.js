@@ -13,15 +13,10 @@ function DeleteButton({ buttonClicked, toggle }) {
           backgroundColor: buttonClicked
             ? "rgba(45, 49, 92, 0.75)"
             : "rgba(210, 210, 210, 0.6)",
+          color: buttonClicked ? "white" : "black",
         }}
       >
-        <b
-          style={{
-            color: buttonClicked ? "white" : "black",
-          }}
-        >
-          {buttonClicked === true ? "Delete Enabled" : "Delete Disabled"}
-        </b>
+        {buttonClicked === true ? "Delete Enabled" : "Delete Disabled"}
       </button>
     );
   }

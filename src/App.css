@@ -68,14 +68,20 @@
 }
 
 .Delete-grid,
-.Clip-grid {
+.Clip-grid,
+.Reset-grid {
   position: absolute;
   border: none;
   border-radius: 5px;
   outline: 0;
   height: 40px;
   width: 60px;
+  font-weight: bold;
 }
+.Reset-grid:hover {
+  color: #9b0b0b;
+}
+
 .Clip-grid {
   transform: translate(-75%, -100%);
 }
@@ -95,32 +101,12 @@
 }
 .rec-carousel-item {
   /* background-color: red; */
-  /* height: 30vh; */
   height: 700px;
-
-  /* width: 50px; */
-
-  /* display: "inline-block"; */
 }
 .rec-item-wrapper {
   height: 100%;
   width: 50%;
-
-  /* height: 300px; */
 }
-/* .rec-slider-container {
-  height: 100vh;
-} */
-
-/* @keyframes Carousel {
-  0% {
-    transform: translateY(100vh);
-  }
-
-  100% {
-    transform: translateY(0vh);
-  }
-} */
 
 .Square {
   display: inline-block;

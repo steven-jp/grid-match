@@ -20,12 +20,8 @@ function Grid({ renderGridHandler }) {
   let createdPreviously = gridContext.createdPreviously;
   let setCreatedPreviously = gridContext.setCreatedPreviously;
   let canvasLines = gridContext.canvasLines;
-  console.log(canvasLines);
-  // const [renderContext, setRenderContext] = useState(null); // fix this
-
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
-    // setRenderContext(ctx);
     // only create out canvas lines if they weren't created yet.
     if (!createdPreviously) {
       createGrid(ctx);
@@ -268,8 +264,6 @@ function Grid({ renderGridHandler }) {
   //disable grid movement.
   const mouseUpHandler = (e) => {
     e.preventDefault();
-    // startX = 0;
-    // startY = 0;
     gridLines = {
       moving: false,
       current: [],
@@ -287,9 +281,7 @@ function Grid({ renderGridHandler }) {
       />
       <ClipGrid
         canvasLines={canvasLines.current}
-        // imgBlob={imgBlob}
         setDisplayCanvas={setDisplayCanvas}
-        // canvasContextHandler={() => renderContext}
       />
       {displayCanvas ? (
         <canvas
