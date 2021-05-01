@@ -5,7 +5,7 @@ import "./App.css";
 import { GridContext } from "./App";
 import Carousel from "react-elastic-carousel";
 
-function ClipGrid({ canvasLines, setDisplayCanvas }) {
+function ClipGrid({ canvasLines }) {
   const gridContext = useContext(GridContext);
   let clicked = gridContext.renderCards;
   // let cards = useRef([]);
@@ -112,7 +112,7 @@ function ClipGrid({ canvasLines, setDisplayCanvas }) {
 
     if (cards.length === 0) {
       createCoordinates();
-      setDisplayCanvas(false);
+      // setDisplayCanvas(false);
     }
     return (
       <>
@@ -135,6 +135,7 @@ function ClipGrid({ canvasLines, setDisplayCanvas }) {
           itemsToShow={1}
           itemsToScroll={1}
           itemPadding={[10]}
+          enableSwipe={false}
 
           // style={
           //   {

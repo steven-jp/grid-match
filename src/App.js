@@ -30,6 +30,7 @@ function App() {
     cols: "3",
   });
 
+  const [displayCanvas, setDisplayCanvas] = useState(true); // don't display canvas when clip grid button is clicked.
   const [renderCards, setRenderCards] = useState(false); // used to render cards after clip grid button pressed.
   const [renderButtons, setRenderButtons] = useState({
     // for removing
@@ -56,6 +57,9 @@ function App() {
     canvasLines: canvasLines, // dimensions of each line in a grid
     imgBlob: file, // holds image dropped by user
     imgDimensions: imgDimensions.current, // .width, .height
+    displayCanvas: displayCanvas, // only render canvas if clip grid hasn't been pressed.
+    setDisplayCanvas: setDisplayCanvas,
+    renderGridHandler: renderGridHandler, // callback when clip button is pressed.
   };
 
   // dimensions of grid
@@ -129,7 +133,7 @@ function App() {
   //only add grid after form is submitted.
   function AddGrid() {
     if (renderGrid === true) {
-      return <Grid renderGridHandler={renderGridHandler} />;
+      return <Grid />;
     }
     return null;
   }
@@ -156,6 +160,7 @@ function App() {
   function renderGridHandler() {
     setRenderCards(true);
     setRenderButtons(false);
+    // setDisplayCanvas(false);
   }
 
   //reset grid match to original state.
@@ -173,6 +178,7 @@ function App() {
     setRenderGrid(false);
     setFile(null);
     setText("Drag Image Here");
+    setDisplayCanvas(true);
   }
 
   return (

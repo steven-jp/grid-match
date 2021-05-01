@@ -4,12 +4,12 @@ import ClipButton from "./buttons/ClipButton";
 import ClipGrid from "./ClipGrid";
 import { GridContext } from "./App";
 
-function Grid({ renderGridHandler }) {
+function Grid() {
   // to get context of canvas.
   const canvasRef = useRef(null);
   //Remove delete button and canvas (used for grid) on grid clip.
   const [deleteClicked, setDeleteClicked] = useState(false);
-  const [displayCanvas, setDisplayCanvas] = useState(true);
+  // const [displayCanvas, setDisplayCanvas] = useState(true);
   const gridContext = useContext(GridContext);
   // Dimensions of canvas
   let width = gridContext.dimensions.width;
@@ -20,7 +20,10 @@ function Grid({ renderGridHandler }) {
   // For creating the grid lines.
   let createdPreviously = gridContext.createdPreviously;
   let setCreatedPreviously = gridContext.setCreatedPreviously;
+  //Disable canvas when grid is clipped.
+  let displayCanvas = gridContext.displayCanvas;
   let canvasLines = gridContext.canvasLines;
+
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     // only create out canvas lines if they weren't created yet.
@@ -266,15 +269,12 @@ function Grid({ renderGridHandler }) {
 
   return (
     <div>
-      <ClipButton clipButtonHandler={renderGridHandler} />
+      <ClipButton />
       <DeleteButton
         buttonClicked={deleteClicked}
         toggle={() => setDeleteClicked(!deleteClicked)}
       />
-      <ClipGrid
-        canvasLines={canvasLines.current}
-        setDisplayCanvas={setDisplayCanvas}
-      />
+      <ClipGrid canvasLines={canvasLines.current} />
       {displayCanvas ? (
         <canvas
           ref={canvasRef}
