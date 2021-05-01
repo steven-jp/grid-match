@@ -1,35 +1,26 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useState } from "react";
 import Square from "./Square";
 import Card from "./Card";
 import "./App.css";
 import { GridContext } from "./App";
 import Carousel from "react-elastic-carousel";
 
-function ClipGrid({
-  canvasLines,
-  // imgBlob,
-  // canvasContextHandler,
-  setDisplayCanvas,
-}) {
+function ClipGrid({ canvasLines, setDisplayCanvas }) {
   const gridContext = useContext(GridContext);
   let clicked = gridContext.renderCards;
-  let cards = useRef([]);
-  //-----------------------------------
-  //todo fix where to place end point if current col doesnt have a bottom row.
-  //fix where carousel is positioned.
-  //Optimize row col matching. No need to match every row against every col.
-  //-----------------------------------
-  // if (clicked && temp.length === 0) {
+  // let cards = useRef([]);
+  const [cards, setCards] = useState([]);
+  const [squares, setSquares] = useState([]);
+
   if (clicked) {
     /* Drawing points are used to determine where to draw boxes. We want to create boxes using the top left coords
      Spanning to the bottom right coords of lines that have collisions. 
      */
-
     function createCoordinates() {
       const MAX_DIFF = 15;
       //min and max coordinates will always be a drawing point.
       let validCoords = [];
-      cards.current = [];
+      // cards.current = [];
       let validCols = canvasLines.filter(
         (line) => line.deleted === false && line.isRow === false,
       );
@@ -40,34 +31,47 @@ function ClipGrid({
       let key = 0;
       for (let i = 0; i < validCols.length; i++) {
         const currentCol = validCols[i];
-        let a = containsRow("TOP", currentCol, validRows, null, MAX_DIFF);
+        let a = containsRow("TOP", currentCol, validRows, MAX_DIFF);
         if (a === true) {
           //if we have a top row we must have a next col on right side.
           let sameIndexCols = validCols.filter(
-            (line) => line.index === currentCol.index,
+            (line) =>
+              line.index === currentCol.index + 1 &&
+              line.coords.y >= currentCol.coords.y,
           );
-          const nextCol = validCols[i + 1];
-          if (
-            containsRow("BOTTOM", nextCol, validRows, sameIndexCols, MAX_DIFF)
+          let index = 0;
+          let nextCol = sameIndexCols[index];
+          // //iterate through all cols and keep going while current one doesn't match until we get one that does. then we want
+          // //to make that the bottom right corner.
+          //----add to check if col and row are deleted then go to next col. if just row is deleted go
+          //down, if col is just deleted go right. (grab next rows and next cols)
+          while (
+            containsRow("BOTTOM", nextCol, validRows, MAX_DIFF) === false
           ) {
-            let dimensions = {
-              xStart: currentCol.coords.x,
-              yStart: currentCol.coords.y,
-              xEnd: nextCol.coords.x,
-              yEnd: nextCol.coords.y + nextCol.coords.height,
-              id: key,
-            };
-            validCoords.push(dimensions);
-            cards.current.push(dimensions);
-            key++;
+            index++;
+            nextCol = sameIndexCols[index];
           }
+          let dimensions = {
+            xStart: currentCol.coords.x,
+            yStart: currentCol.coords.y,
+            xEnd: nextCol.coords.x,
+            yEnd: nextCol.coords.y + nextCol.coords.height,
+            id: key,
+          };
+          validCoords.push(dimensions);
+          // cards.current.push(dimensions);
+          // setSquares([...squares, dimensions]);
+          // setCards([...cards, dimensions]);
+          key++;
         }
       }
-      shuffle(cards.current);
-      return validCoords;
+      setSquares(validCoords);
+      const cardCoords = [...validCoords];
+      shuffle(cardCoords);
+      setCards(cardCoords);
     }
 
-    function containsRow(rowType, currentCol, rows, cols, MAX_DIFF) {
+    function containsRow(rowType, currentCol, rows, MAX_DIFF) {
       for (let i = 0; i < rows.length; i++) {
         const currentRow = rows[i];
         //Checking from left corner
@@ -79,13 +83,14 @@ function ClipGrid({
             return true;
           }
         }
-        //checking bottom right corner in while loop
+        //checking bottom right corner
         if (rowType === "BOTTOM") {
           let xDiff = Math.abs(
             currentRow.coords.x +
               currentRow.coords.width -
               (currentCol.coords.x + currentCol.coords.width),
           );
+
           let yDiff = Math.abs(
             currentRow.coords.y +
               currentRow.coords.height -
@@ -101,11 +106,17 @@ function ClipGrid({
       return false;
     }
 
-    let validCoords = createCoordinates();
-    setDisplayCanvas(false);
+    function removeCardHandler(id) {
+      setCards(cards.filter((card) => card.id !== id));
+    }
+
+    if (cards.length === 0) {
+      createCoordinates();
+      setDisplayCanvas(false);
+    }
     return (
       <>
-        {validCoords.map((coordinate) => {
+        {squares.map((coordinate) => {
           const dimensions = {
             xStart: coordinate.xStart,
             yStart: coordinate.yStart,
@@ -131,7 +142,7 @@ function ClipGrid({
           //   }
           // }
         >
-          {cards.current.map((coordinate) => {
+          {cards.map((coordinate) => {
             const dimensions = {
               xStart: coordinate.xStart,
               yStart: coordinate.yStart,
@@ -143,7 +154,7 @@ function ClipGrid({
                 key={coordinate.id}
                 id={coordinate.id}
                 dimensions={dimensions}
-                // imgBlob={imgBlob}
+                removeCardHandler={removeCardHandler}
               ></Card>
             );
           })}

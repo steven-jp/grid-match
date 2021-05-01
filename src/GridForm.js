@@ -5,7 +5,6 @@ function GridForm({ gridDimensions, handleGridChange, handleGridSubmit }) {
       <input
         type="text"
         name="rows"
-        // placeholder="Rows"
         className="grid-row"
         value={gridDimensions.rows}
         onChange={handleGridChange}
@@ -15,7 +14,6 @@ function GridForm({ gridDimensions, handleGridChange, handleGridSubmit }) {
       <input
         type="text"
         name="cols"
-        // placeholder="Columns"
         className="grid-col"
         value={gridDimensions.cols}
         onChange={handleGridChange}

@@ -17,14 +17,14 @@ import GridForm from "./GridForm";
 export const GridContext = createContext();
 
 function App() {
-  const myRef = useRef(null);
-  const MAX_GRID_DIMS = 20;
+  const myRef = useRef(null); // reference to grid for grabbing size.
+  const MAX_GRID_DIMS = 20; // only allows a max 20x20 grid.
 
   //Passed globally for grid creation
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  let imgDimensions = useRef({ width: 0, height: 0 });
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 }); // size of max grid container.
+  let imgDimensions = useRef({ width: 0, height: 0 }); // size of the image inside the grid container.
 
-  // const [gridDimensions, setGridDimensions] = useState({ rows: "", cols: "" });
+  // const [gridDimensions, setGridDimensions] = useState({ rows: "", cols: "" }); // defaults rows/cols for grid form.
   const [gridDimensions, setGridDimensions] = useState({
     rows: "3",
     cols: "3",
@@ -32,16 +32,18 @@ function App() {
 
   const [renderCards, setRenderCards] = useState(false); // used to render cards after clip grid button pressed.
   const [renderButtons, setRenderButtons] = useState({
+    // for removing
     delete: true,
     clip: true,
   });
-  const [createdPreviously, setCreatedPreviously] = useState(false);
-  let canvasLines = useRef([]);
-  const [text, setText] = useState("Drag Image Here");
+  const [createdPreviously, setCreatedPreviously] = useState(false); // allows canvaslines to be created a single time.
+  let canvasLines = useRef([]); // holds each line making up the grid.
+  const [text, setText] = useState("Drag Image Here"); // remove text on image drop.
+
   // This components hooks
   const [renderForm, setRenderForm] = useState(false); // Renders user input for grid.
   const [renderGrid, setRenderGrid] = useState(false); //displays grid if we have user input
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState(null); // holds users image dropped.
 
   //Global variables object
   const ContextValue = {
@@ -105,7 +107,7 @@ function App() {
       setRenderForm(false);
     }
   }
-
+  //update grid dimensions on form submit.
   function handleGridChange(e) {
     setGridDimensions({
       ...gridDimensions,

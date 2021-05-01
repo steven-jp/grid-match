@@ -1,10 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useDrag } from "react-dnd";
 import { ItemTypes } from "./ItemTypes";
 import { GridContext } from "./App";
 
-function Card({ id, dimensions }) {
-  const [validAnswer, setValidAnswer] = useState(false);
+function Card({ id, dimensions, removeCardHandler }) {
   const [, drag] = useDrag(() => ({
     type: ItemTypes.CARD,
     item: { id },
@@ -15,7 +14,7 @@ function Card({ id, dimensions }) {
   function validDrop(monitor) {
     if (monitor.getDropResult()) {
       let correct = monitor.getDropResult().correct;
-      if (correct) setValidAnswer(true);
+      if (correct) removeCardHandler(id);
     }
   }
   //get width and height of original image to determine where to show viewbox.
@@ -23,7 +22,6 @@ function Card({ id, dimensions }) {
   let width = gridContext.imgDimensions.width;
   let height = gridContext.imgDimensions.height;
   let imgBlob = gridContext.imgBlob;
-  // console.log(width, height);
   function DisplayCard() {
     let viewBoxValues =
       dimensions.xStart +
@@ -76,7 +74,6 @@ function Card({ id, dimensions }) {
           style={{
             width: width,
             height: height,
-            // preserveAspectRatio: "xMinYMin slice",
           }}
         />
       </svg>
@@ -85,23 +82,23 @@ function Card({ id, dimensions }) {
   return (
     //height in carousel container.
     <>
-      {!validAnswer ? (
-        //Card properties
-        <div
-          ref={drag}
-          style={{
-            // borderRadius: "5px",
-            // border: "dashed",
-            height: "50%",
-            width: "50%",
+      {/* {!validAnswer ? ( */}
+      {/* //Card properties */}
+      <div
+        ref={drag}
+        style={{
+          // borderRadius: "5px",
+          // border: "dashed",
+          height: "50%",
+          width: "50%",
 
-            // maxWidth: "100%",
-            // maxHeight: "100%",
-          }}
-        >
-          <DisplayCard />
-        </div>
-      ) : null}
+          // maxWidth: "100%",
+          // maxHeight: "100%",
+        }}
+      >
+        <DisplayCard />
+      </div>
+      {/* ) : undefined} */}
     </>
   );
 }

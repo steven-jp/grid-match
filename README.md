@@ -1,70 +1,20 @@
-# Getting Started with Create React App
+# This React App allows the user to play a matching game based off of a grid.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The user drops an image and is prompted with a form asking for rows and columns.
+They are then given a movable grid to clip the image and create cards. The cards are then
+randomized and given to the user.
 
-## Available Scripts
+## TODO:
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+-Reduce the size of the carousel. Increased it for now to use but shouldn't have to scroll down to grab each card. When the size is reduced the svg viewbox inside of the card expands outside of the carousel container. When changed to fit the image inside the card container with 100% width/height, the viewbox will expand outside of the card container.
+-Add merging cells. Just need to iterate through the column under 'BOTTOM'. if row deleted go down, if col deleted go right, if both then go rigtht/down.
+-Increase size of image beyond actual size when image is dragged. Only goes to actual size.
+-Remove warning for grid/clipgrid callback rendering.
+-When a card is dragged and let go the carousel thinks the card is still being held. This makes the carousel move side to side following the cursor..
+-Add some bounds to avoid grid lines from going past there neighbors on drag.
+-Update clipping hard error. If the lines are very close it crashes very rarely.
+-Add unit test to ensure grid clips all the way up to 20x20.
+-Add a scoring system.
+-Game resets to same cards when all cards are matched. Lift cards/squares state up. This should also remove the bug where ocassionally the first card on a recreation matches fine but doesn't remove from array.
+-Get rid of default grid size 3x3
+-Clean up code

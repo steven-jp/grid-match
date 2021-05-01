@@ -5,9 +5,9 @@ import ClipGrid from "./ClipGrid";
 import { GridContext } from "./App";
 
 function Grid({ renderGridHandler }) {
+  // to get context of canvas.
   const canvasRef = useRef(null);
-  // const canvasLines = useRef([]);
-
+  //Remove delete button and canvas (used for grid) on grid clip.
   const [deleteClicked, setDeleteClicked] = useState(false);
   const [displayCanvas, setDisplayCanvas] = useState(true);
   const gridContext = useContext(GridContext);
@@ -15,8 +15,9 @@ function Grid({ renderGridHandler }) {
   let width = gridContext.dimensions.width;
   let height = gridContext.dimensions.height;
   //Amount of rows and columns in grid.
-  let rows = gridContext.gridDimensions.rows;
-  let cols = gridContext.gridDimensions.cols;
+  let rows = parseInt(gridContext.gridDimensions.rows);
+  let cols = parseInt(gridContext.gridDimensions.cols);
+  // For creating the grid lines.
   let createdPreviously = gridContext.createdPreviously;
   let setCreatedPreviously = gridContext.setCreatedPreviously;
   let canvasLines = gridContext.canvasLines;
@@ -28,16 +29,7 @@ function Grid({ renderGridHandler }) {
     } else {
       draw(ctx);
     }
-  }, [canvasRef]); // changed from [canvasLines.current]
-
-  //---------------------------------------------
-  /* Add test to determine if values are correct */
-
-  /* BUG FIX NEEDED: if you draw a bunch then it will just look like a black square 
-    -- if no more lines then crashes
-  */
-  // clipping isn't working properly at correct location. off by a lil
-  //---------------------------------------------
+  }, [canvasRef]);
 
   /* create grid and add view */
   const createGrid = (ctx) => {
@@ -58,7 +50,7 @@ function Grid({ renderGridHandler }) {
       }
       /* Draw right columns on edges of canvas to prevent 
           being out of bounds */
-      if (currentCol === parseInt(cols)) {
+      if (currentCol === cols) {
         createLine(
           width - lineSize,
           y,
@@ -94,7 +86,7 @@ function Grid({ renderGridHandler }) {
         lineX,
         lineSize,
         true,
-        parseInt(rows),
+        rows,
         currentCol++,
       );
     }
@@ -135,7 +127,7 @@ function Grid({ renderGridHandler }) {
       }
     });
   }
-
+  //handles deletion of lines for merging cells.
   const onClickHandler = (e) => {
     if (deleteClicked) {
       const ctx = canvasRef.current.getContext("2d");
@@ -145,15 +137,15 @@ function Grid({ renderGridHandler }) {
       for (let i = 0; i < canvasLines.current.length; i++) {
         let currentLine = canvasLines.current[i];
         if (ctx.isPointInPath(currentLine.path, x, y, "nonzero")) {
-          // console.log(rows);
-          // if (
-          //   currentLine.index !== 0 &&
-          //   ((currentLine.isRow && currentLine.index !== rows) ||
-          //     (!currentLine.isRow && currentLine.index !== cols))
-          // ) {
-          currentLine.deleted = true;
+          //only delete lines that aren't on the ousides of the grid.
+          if (
+            currentLine.index !== 0 &&
+            ((currentLine.isRow && currentLine.index !== rows) ||
+              (!currentLine.isRow && currentLine.index !== cols))
+          ) {
+            currentLine.deleted = true;
+          }
         }
-        // }
       }
       draw(ctx);
     }
