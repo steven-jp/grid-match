@@ -6,7 +6,6 @@ randomized and given to the user.<br/>
 
 ## TODO:
 
--Reduce the size of the carousel. Increased it for now to use but shouldn't have to scroll down to grab each card. When the size is reduced the svg viewbox inside of the card expands outside of the carousel container. When changed to fit the image inside the card container with 100% width/height, the viewbox will expand outside of the card container.<br/>
 -Add merging cells. Just need to iterate through the column under 'BOTTOM'. if row deleted go down, if col deleted go right, if both then go rigtht/down.<br/>
 -Increase size of image beyond actual size when image is dragged. Only goes to actual size.<br/>
 -Add some bounds to avoid grid lines from going past there neighbors on drag.<br/>

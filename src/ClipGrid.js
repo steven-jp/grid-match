@@ -66,6 +66,7 @@ function ClipGrid({ canvasLines }) {
         }
       }
       setSquares(validCoords);
+      console.log(validCoords);
       const cardCoords = [...validCoords];
       shuffle(cardCoords);
       setCards(cardCoords);
@@ -112,7 +113,6 @@ function ClipGrid({ canvasLines }) {
 
     if (cards.length === 0) {
       createCoordinates();
-      // setDisplayCanvas(false);
     }
     return (
       <>
@@ -136,12 +136,6 @@ function ClipGrid({ canvasLines }) {
           itemsToScroll={1}
           itemPadding={[10]}
           enableSwipe={false}
-
-          // style={
-          //   {
-          //     // bottom: "-50%",
-          //   }
-          // }
         >
           {cards.map((coordinate) => {
             const dimensions = {

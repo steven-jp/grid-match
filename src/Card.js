@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useRef, useEffect } from "react";
 import { useDrag } from "react-dnd";
 import { ItemTypes } from "./ItemTypes";
 import { GridContext } from "./App";
@@ -17,89 +17,48 @@ function Card({ id, dimensions, removeCardHandler }) {
       if (correct) removeCardHandler(id);
     }
   }
-  //get width and height of original image to determine where to show viewbox.
+
+  //size of image on screen
   const gridContext = useContext(GridContext);
   let width = gridContext.imgDimensions.width;
   let height = gridContext.imgDimensions.height;
   let imgBlob = gridContext.imgBlob;
-  function DisplayCard() {
-    let viewBoxValues =
-      dimensions.xStart +
-      " " +
-      dimensions.yStart +
-      " " +
-      (dimensions.xEnd - dimensions.xStart) +
-      " " +
-      (dimensions.yEnd - dimensions.yStart);
 
-    // determine what to expand to keep same aspect ratio.
+  //card ref and size.
+  let imageWidth = dimensions.xEnd - dimensions.xStart;
+  let imageHeight = dimensions.yEnd - dimensions.yStart;
+  const cardCanvas = useRef(null);
 
-    let svgStyles = {};
-    let cardWidthRatio = dimensions.xEnd - dimensions.xStart;
-    let cardHeightRatio = dimensions.yEnd - dimensions.yStart;
-    cardWidthRatio > cardHeightRatio
-      ? (svgStyles.width = "100%")
-      : (svgStyles.height = "100%");
-    svgStyles.width = "";
+  useEffect(() => {
+    const ctx = cardCanvas.current.getContext("2d");
+    var img = new Image();
+    img.src = imgBlob;
 
-    // let parentWidth = 1,
-    //   parentHeight = 1;
-    // //how much do i expand the highest percentage difference to make the smallest fit.
-    // let svgStyles = {};
-    // let cardWidthRatio = parentWidth / (dimensions.xEnd - dimensions.xStart);
-    // let cardHeightRatio = parentHeight / (dimensions.yEnd - dimensions.yStart);
-    // cardWidthRatio > cardHeightRatio
-    //   ? (svgStyles.width = "100%")
-    //   : (svgStyles.height = "100%");
-    // svgStyles.width = "";
+    img.onload = function () {
+      //Get scaling of img. Lines will correspond to scaled image whereas img will correspond to
+      // the full imageblob size.
+      let scaleX = img.width / width;
+      let scaleY = img.height / height;
 
-    return (
-      //Show specific view of image used in
-      <svg
-        viewBox={viewBoxValues}
-        // style={
-        //   {
-        //     // maxWidth: "100%",
-        //     // height: "auto",
-        //     // maxWidth: "100%",
-        //     // maxHeight: "100%",
-        //   }
-        // }
-        style={svgStyles}
-      >
-        {/* <rect x="0" y="0" width="100%" height="100%" fill="#FEDA00"></rect> */}
-        <image
-          className="card-image"
-          xlinkHref={imgBlob}
-          style={{
-            width: width,
-            height: height,
-          }}
-        />
-      </svg>
-    );
-  }
+      //clip image to fit card dimensions.
+      ctx.drawImage(
+        img,
+        dimensions.xStart * scaleX,
+        dimensions.yStart * scaleY,
+        imageWidth * scaleX,
+        imageHeight * scaleY,
+        0,
+        0,
+        imageWidth,
+        imageHeight,
+      );
+    };
+  });
+
   return (
-    //height in carousel container.
-    <>
-      {/* {!validAnswer ? ( */}
-      {/* //Card properties */}
-      <div
-        ref={drag}
-        style={{
-          // borderRadius: "5px",
-          // border: "dashed",
-          height: "50%",
-          width: "50%",
-
-          // maxWidth: "100%",
-          // maxHeight: "100%",
-        }}
-      >
-        <DisplayCard />
-      </div>
-      {/* ) : undefined} */}
-    </>
+    <div ref={drag}>
+      <canvas ref={cardCanvas} width={imageWidth} height={imageHeight}></canvas>
+    </div>
   );
 }
 

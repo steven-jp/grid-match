@@ -94,19 +94,6 @@
   z-index: 600;
   position: absolute;
   transform: translateY(70vh);
-
-  /* background-color: green; */
-}
-.rec-carousel {
-  /* background-color: blue; */
-}
-.rec-carousel-item {
-  /* background-color: red; */
-  height: 700px;
-}
-.rec-item-wrapper {
-  height: 100%;
-  width: 50%;
 }
 
 .Square {
