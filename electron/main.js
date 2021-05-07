@@ -9,8 +9,8 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 680,
+    width: 100,
+    height: 800,
     webPreferences: { nodeIntegration: true },
   });
   mainWindow.loadURL(
@@ -20,7 +20,6 @@ function createWindow() {
   );
   mainWindow.on("closed", () => (mainWindow = null));
 }
-
 app.on("ready", createWindow);
 
 app.on("window-all-closed", () => {

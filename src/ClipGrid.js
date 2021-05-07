@@ -8,7 +8,6 @@ import Carousel from "react-elastic-carousel";
 function ClipGrid({ canvasLines }) {
   const gridContext = useContext(GridContext);
   let clicked = gridContext.renderCards;
-  // let cards = useRef([]);
   const [cards, setCards] = useState([]);
   const [squares, setSquares] = useState([]);
 
@@ -41,9 +40,7 @@ function ClipGrid({ canvasLines }) {
           );
           let index = 0;
           let nextCol = sameIndexCols[index];
-          // //iterate through all cols and keep going while current one doesn't match until we get one that does. then we want
-          // //to make that the bottom right corner.
-          //----add to check if col and row are deleted then go to next col. if just row is deleted go
+          //Add to check if col and row are deleted then go to next col. if just row is deleted go
           //down, if col is just deleted go right. (grab next rows and next cols)
           while (
             containsRow("BOTTOM", nextCol, validRows, MAX_DIFF) === false
@@ -59,14 +56,10 @@ function ClipGrid({ canvasLines }) {
             id: key,
           };
           validCoords.push(dimensions);
-          // cards.current.push(dimensions);
-          // setSquares([...squares, dimensions]);
-          // setCards([...cards, dimensions]);
           key++;
         }
       }
       setSquares(validCoords);
-      console.log(validCoords);
       const cardCoords = [...validCoords];
       shuffle(cardCoords);
       setCards(cardCoords);

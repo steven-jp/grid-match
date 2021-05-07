@@ -1,8 +1,6 @@
 import React, { useContext } from "react";
 import { GridContext } from "../App";
 
-// todo: add animation when clicked.
-
 function ClipButton() {
   const gridContext = useContext(GridContext);
   let renderButton = gridContext.renderButtons.clip;

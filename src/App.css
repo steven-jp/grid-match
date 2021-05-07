@@ -1,7 +1,6 @@
 .App {
   background-color: rgb(191, 210, 255);
   text-align: center;
-  /* display: inline-block; */
   height: 100vh;
   width: 100vw;
   overflow-y: auto;
@@ -32,8 +31,7 @@
   z-index: 0;
 }
 
-/* ================Row col grid form================*/
-/* Need to update gridform to change size dynmically */
+/* ================Grid form================*/
 .grid-form {
   background-color: rgba(92, 45, 45, 0.75);
   border-radius: 5px;
@@ -59,15 +57,15 @@
   border: none;
 }
 
+/* ================Main Grid================*/
 .Grid {
   position: absolute;
   z-index: 3;
   top: 0px;
   left: 0px;
-  /* height: 70%;
-  width: 70%; */
 }
 
+/* ================Buttons================*/
 .Delete-grid,
 .Clip-grid,
 .Reset-grid {
@@ -90,6 +88,7 @@
   transform: translate(75%, -100%);
 }
 
+/* ================Cards, Squares, and Carousel================*/
 .rec-carousel-wrapper {
   z-index: 600;
   position: absolute;

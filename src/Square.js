@@ -23,7 +23,6 @@ function Square({ id, dimensions }) {
     <div
       className="Square"
       ref={drop}
-      // onDrop={(e) => e.stopPropagation()}
       style={{
         backgroundColor: isOver ? "rgb(173,149,149)" : "blue",
         top: dimensions.yStart,
@@ -31,9 +30,7 @@ function Square({ id, dimensions }) {
         height: dimensions.yEnd - dimensions.yStart,
         width: dimensions.xEnd - dimensions.xStart,
       }}
-    >
-      {/* <h1>x</h1> */}
-    </div>
+    ></div>
   );
 }
 

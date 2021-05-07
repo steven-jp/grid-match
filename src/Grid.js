@@ -52,7 +52,7 @@ function Grid() {
         createLine(x, y, lineSize, lineY, false, currentCol++, currentRow);
       }
       /* Draw right columns on edges of canvas to prevent 
-          being out of bounds */
+        being out of bounds */
       if (currentCol === cols) {
         createLine(
           width - lineSize,

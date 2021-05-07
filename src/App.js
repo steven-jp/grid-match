@@ -160,7 +160,6 @@ function App() {
   function renderGridHandler() {
     setRenderCards(true);
     setRenderButtons(false);
-    // setDisplayCanvas(false);
   }
 
   //reset grid match to original state.
