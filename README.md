@@ -14,8 +14,9 @@ randomized and given to the user.<br/>
 -Add unit test to ensure grid clips all the way up to 20x20.<br/>
 -Add a scoring system.<br/>
 -Game resets to same cards when all cards are matched. Lift cards/squares state up. This should also remove the bug where ocassionally the first card on a recreation matches fine but doesn't remove from array. It will also remove cards rerendering when browser is resized.<br/>
--Get rid of default grid size 3x3<br/>
 -Maybe add OCR and google api to look up definition of columns/rows. <br/>
 -Add a replay button. <br/>
 -Add animation to butons. <br/>
+-Add browse button for image or ability to use URL. <br/>
+-Get rid of default grid size 3x3<br/>
 -Clean up code<br/>

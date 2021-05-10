@@ -1,15 +1,20 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import Square from "./Square";
 import Card from "./Card";
 import "./App.css";
 import { GridContext } from "./App";
 import Carousel from "react-elastic-carousel";
+import ReplayButton from "./buttons/ReplayButton";
+import Score from "./Score";
 
 function ClipGrid({ canvasLines }) {
   const gridContext = useContext(GridContext);
   let clicked = gridContext.renderCards;
-  const [cards, setCards] = useState([]);
-  const [squares, setSquares] = useState([]);
+  let cards = gridContext.cards;
+  let setCards = gridContext.setCards;
+  let squares = gridContext.squares;
+  let setSquares = gridContext.setSquares;
+  let scoreDispatch = gridContext.scoreDispatch;
 
   if (clicked) {
     /* Drawing points are used to determine where to draw boxes. We want to create boxes using the top left coords
@@ -19,7 +24,6 @@ function ClipGrid({ canvasLines }) {
       const MAX_DIFF = 15;
       //min and max coordinates will always be a drawing point.
       let validCoords = [];
-      // cards.current = [];
       let validCols = canvasLines.filter(
         (line) => line.deleted === false && line.isRow === false,
       );
@@ -100,15 +104,26 @@ function ClipGrid({ canvasLines }) {
       return false;
     }
 
+    //remove card if matched
     function removeCardHandler(id) {
       setCards(cards.filter((card) => card.id !== id));
     }
 
+    //set scores to 0 and reset cards.
+    function replayHandler() {
+      setCards([]);
+      scoreDispatch({ type: "RESET" });
+      alert("The current game has been replayed");
+    }
+
+    //only recreate cards if empty or haven't been initialized.
     if (cards.length === 0) {
       createCoordinates();
     }
     return (
       <>
+        <ReplayButton replayHandler={replayHandler} />
+        <Score />
         {squares.map((coordinate) => {
           const dimensions = {
             xStart: coordinate.xStart,

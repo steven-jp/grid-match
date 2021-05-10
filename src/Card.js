@@ -4,20 +4,6 @@ import { ItemTypes } from "./ItemTypes";
 import { GridContext } from "./App";
 
 function Card({ id, dimensions, removeCardHandler }) {
-  const [, drag] = useDrag(() => ({
-    type: ItemTypes.CARD,
-    item: { id },
-    end: (item, monitor) => validDrop(monitor),
-  }));
-
-  //Check for a matching square.
-  function validDrop(monitor) {
-    if (monitor.getDropResult()) {
-      let correct = monitor.getDropResult().correct;
-      if (correct) removeCardHandler(id);
-    }
-  }
-
   //size of image on screen
   const gridContext = useContext(GridContext);
   let width = gridContext.imgDimensions.width;
@@ -28,6 +14,28 @@ function Card({ id, dimensions, removeCardHandler }) {
   let imageWidth = dimensions.xEnd - dimensions.xStart;
   let imageHeight = dimensions.yEnd - dimensions.yStart;
   const cardCanvas = useRef(null);
+
+  //Handles score
+  let scoreDispatch = gridContext.scoreDispatch;
+
+  const [, drag] = useDrag(() => ({
+    type: ItemTypes.CARD,
+    item: { id },
+    end: (item, monitor) => validDrop(monitor),
+  }));
+
+  //Check for a matching square.
+  function validDrop(monitor) {
+    if (monitor.getDropResult()) {
+      let correct = monitor.getDropResult().correct;
+      if (correct) {
+        scoreDispatch({ type: "CORRECT" });
+        removeCardHandler(id);
+      } else {
+        scoreDispatch({ type: "INCORRECT" });
+      }
+    }
+  }
 
   useEffect(() => {
     const ctx = cardCanvas.current.getContext("2d");

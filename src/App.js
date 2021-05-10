@@ -5,12 +5,14 @@ import React, {
   useRef,
   createContext,
   useCallback,
+  useReducer,
 } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Grid from "./Grid";
 import ResetButton from "./buttons/ResetButton";
 import GridForm from "./GridForm";
+import { scoreReducer } from "./reducers/index";
 
 // fix bug with dropping multiple images. re brings up the forms
 
@@ -46,6 +48,17 @@ function App() {
   const [renderGrid, setRenderGrid] = useState(false); //displays grid if we have user input
   const [file, setFile] = useState(null); // holds users image dropped.
 
+  //state for cards and squares on clipgrid.
+  const [cards, setCards] = useState([]);
+  const [squares, setSquares] = useState([]);
+
+  //Handles keeping track of score.
+
+  const [scoreState, scoreDispatch] = useReducer(scoreReducer, {
+    correct: 0,
+    incorrect: 0,
+  });
+
   //Global variables object
   const ContextValue = {
     renderCards: renderCards, // only render cards if we've clicked clip button
@@ -60,6 +73,12 @@ function App() {
     displayCanvas: displayCanvas, // only render canvas if clip grid hasn't been pressed.
     setDisplayCanvas: setDisplayCanvas,
     renderGridHandler: renderGridHandler, // callback when clip button is pressed.
+    cards: cards,
+    setCards: setCards,
+    squares: squares,
+    setSquares: setSquares,
+    scoreState: scoreState,
+    scoreDispatch: scoreDispatch,
   };
 
   // dimensions of grid
@@ -178,6 +197,9 @@ function App() {
     setFile(null);
     setText("Drag Image Here");
     setDisplayCanvas(true);
+    setCards([]);
+    setSquares([]);
+    scoreDispatch({ type: "RESET" });
   }
 
   return (

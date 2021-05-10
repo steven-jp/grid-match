@@ -68,7 +68,8 @@
 /* ================Buttons================*/
 .Delete-grid,
 .Clip-grid,
-.Reset-grid {
+.Reset-grid,
+.Replay-grid {
   position: absolute;
   border: none;
   border-radius: 5px;
@@ -87,7 +88,9 @@
 .Delete-grid {
   transform: translate(75%, -100%);
 }
-
+.Replay-grid {
+  transform: translate(-75%, -100%);
+}
 /* ================Cards, Squares, and Carousel================*/
 .rec-carousel-wrapper {
   z-index: 600;
@@ -102,4 +105,9 @@
   box-sizing: border-box;
   border-radius: 5px;
   border: dashed;
+}
+
+/* ================Score of player================*/
+.Score-board {
+  transform: translate(75%, -100%);
 }
