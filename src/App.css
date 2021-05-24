@@ -109,5 +109,10 @@
 
 /* ================Score of player================*/
 .Score-board {
+  display: inline-block;
   transform: translate(75%, -100%);
+}
+.Score-board b {
+  display: block;
+  text-align: left;
 }

@@ -8,8 +8,8 @@ function Score() {
 
   return (
     <div className="Score-board">
-      Correct: {scoreState.correct}
-      Incorrect: {scoreState.incorrect}
+      <b>Correct: {scoreState.correct}</b>
+      <b> Incorrect: {scoreState.incorrect}</b>
     </div>
   );
 }

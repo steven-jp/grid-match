@@ -18,7 +18,8 @@ function ClipGrid({ canvasLines }) {
 
   if (clicked) {
     /* Drawing points are used to determine where to draw boxes. We want to create boxes using the top left coords
-     Spanning to the bottom right coords of lines that have collisions. 
+     Spanning to the bottom right coords of lines that have collisions. At this point there will only be a box 
+     due to the delete function removing all improper lines. 
      */
     function createCoordinates() {
       const MAX_DIFF = 15;
@@ -36,7 +37,8 @@ function ClipGrid({ canvasLines }) {
         const currentCol = validCols[i];
         let a = containsRow("TOP", currentCol, validRows, MAX_DIFF);
         if (a === true) {
-          //if we have a top row we must have a next col on right side.
+          //If we have a top row we must have a next col on right side.
+          //Get columns from next available column and row.
           let sameIndexCols = validCols.filter(
             (line) =>
               line.index === currentCol.index + 1 &&
@@ -44,10 +46,10 @@ function ClipGrid({ canvasLines }) {
           );
           let index = 0;
           let nextCol = sameIndexCols[index];
-          //Add to check if col and row are deleted then go to next col. if just row is deleted go
-          //down, if col is just deleted go right. (grab next rows and next cols)
+          //Check next column to get the first bottom right corner.
           while (
             containsRow("BOTTOM", nextCol, validRows, MAX_DIFF) === false
+            // nextRow.deleted === true || nextCol.deleted === true
           ) {
             index++;
             nextCol = sameIndexCols[index];
