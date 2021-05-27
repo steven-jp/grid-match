@@ -6,7 +6,9 @@ randomized and given to the user.<br/>
 
 ## TODO:
 
--Add merging cells. Just need to iterate through the column under 'BOTTOM'. if row deleted go down, if col deleted go right, if both then go rigtht/down.<br/>
+-Fix merging cells algorithm. DFS only traverses a max of two rows/cols. (If we have rows in a row it will delete the first two) <br/>
+-Merged cells don't clip properly in clipgrid.<br/>
+-Clipping with only bounds creates a hard error<br/>
 -Increase size of image beyond actual size when image is dragged. Only goes to actual size.<br/>
 -scale cards and squares when browser is resized. To do so we'd create a new method that takes existing coords and scales it. Each coord will have a value called scale which will pertain to what the image size was. We then get the coords in terms of the current image size.<br/>
 -Add some bounds to avoid grid lines from going past there neighbors on drag.<br/>
@@ -14,8 +16,7 @@ randomized and given to the user.<br/>
 -Add unit test to ensure grid clips all the way up to 20x20.<br/>
 -Game resets to same cards when all cards are matched. Lift cards/squares state up. This should also remove the bug where ocassionally the first card on a recreation matches fine but doesn't remove from array. It will also remove cards rerendering when browser is resized.<br/>
 -Maybe add OCR and google api to look up definition of columns/rows. <br/>
--Add a replay button. <br/>
--Add animation to butons. <br/>
+-Add animation to buttons. <br/>
 -Add browse button for image or ability to use URL. <br/>
 -Get rid of default grid size 3x3<br/>
 -Clean up code<br/>
