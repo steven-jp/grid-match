@@ -4,9 +4,9 @@ The user drops an image and is prompted with a form asking for rows and columns.
 They are then given a movable grid to clip the image and create cards. The cards are then<br/>
 randomized and given to the user.<br/>
 
-<img src="/steven-jp/grid-match/raw/main/gifs/image-drop.gif" alt="" style="max-width:70%;"> <br/>
-<img src="/steven-jp/grid-match/raw/main/gifs/grid-clip.gif" alt="" style="max-width:70%;"> <br/>
-<img src="/steven-jp/grid-match/raw/main/gifs/card-match..gif" alt="" style="max-width:70%;"> <br/>
+<img src="/gifs/image-drop.gif" alt="Dropping of image" style="max-width:70%;"> <br/>
+<img src="/gifs/grid-clip.gif" alt="Clipping of grid" style="max-width:70%;"> <br/>
+<img src="/gifs/card-match.gif" alt="Matching Card" style="max-width:70%;"> <br/>
 
 ## TODO:
 
