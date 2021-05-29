@@ -26,11 +26,11 @@ function App() {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 }); // size of max grid container.
   let imgDimensions = useRef({ width: 0, height: 0 }); // size of the image inside the grid container.
 
-  // const [gridDimensions, setGridDimensions] = useState({ rows: "", cols: "" }); // defaults rows/cols for grid form.
-  const [gridDimensions, setGridDimensions] = useState({
-    rows: "3",
-    cols: "3",
-  });
+  const [gridDimensions, setGridDimensions] = useState({ rows: "", cols: "" }); // defaults rows/cols for grid form.
+  // const [gridDimensions, setGridDimensions] = useState({
+  //   rows: "3",
+  //   cols: "3",
+  // });
 
   const [displayCanvas, setDisplayCanvas] = useState(true); // don't display canvas when clip grid button is clicked.
   const [renderCards, setRenderCards] = useState(false); // used to render cards after clip grid button pressed.

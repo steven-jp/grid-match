@@ -4,6 +4,12 @@ The user drops an image and is prompted with a form asking for rows and columns.
 They are then given a movable grid to clip the image and create cards. The cards are then<br/>
 randomized and given to the user.<br/>
 
+![](gifs/image-drop.gif) <br/>
+
+![](gifs/grid-clip.gif) <br/>
+
+![](gifs/card-match.gif) <br/>
+
 ## TODO:
 
 -Fix merging cells algorithm. DFS only traverses a max of two rows/cols. (If we have rows in a row it will delete the first two) <br/>
@@ -16,5 +22,4 @@ randomized and given to the user.<br/>
 -Maybe add OCR and google api to look up definition of columns/rows. <br/>
 -Add animation to buttons. <br/>
 -Add browse button for image or ability to use URL. <br/>
--Get rid of default grid size 3x3<br/>
 -Clean up code<br/>
