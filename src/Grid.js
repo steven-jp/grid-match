@@ -222,18 +222,21 @@ function Grid() {
   'visited' flag for the current DFS. Each line deleted can come in contact
   with 8 lines (4 at a given coord and 4 at end of a line). */
   function improperLineDFS(coords, line) {
-    //Only check lines that have been deleted
+    //Only check lines that have been deleted and not visited yet
     if (line === null || line === undefined || !line.deleted) {
       return;
     }
+    let [row, col] = getCoordinatesOfLine(line);
+    if (coords[row][col].visited) {
+      return;
+    }
+
     //Check if the current line is a row and doesn't contain proper bounding columns or if it's
     // a column and doesn't contain bounding rows;
 
     //Check current coordinate lines
     checkCoords(coords, line);
-
     //Check next coordinate lines
-    let [row, col] = getCoordinatesOfLine(line);
     if (line.isRow && validCoord(row, col + 1)) {
       checkCoords(coords, coords[row][col + 1].left, 0, 1);
     }
@@ -249,13 +252,13 @@ function Grid() {
     if (line === null) {
       return;
     }
-
     let [row, col] = getCoordinatesOfLine(line, incremRow, incremCol);
     let top = coords[row][col].top;
     let bottom = coords[row][col].bottom;
     let right = coords[row][col].right;
     let left = coords[row][col].left;
 
+    coords[row][col].visited = true;
     //Only delete lines if they have any bounds missing.
     if (
       (line.isRow &&
@@ -280,22 +283,22 @@ function Grid() {
   function deleteAllLines(coords, row, col) {
     let top, bottom, right, left;
     if (coords[row][col].top) {
-      top = coords[row][col].top.deleted;
+      top = coords[row][col].top;
       coords[row][col].top.deleted = true;
     }
     if (coords[row][col].bottom) {
-      bottom = coords[row][col].bottom.deleted;
+      bottom = coords[row][col].bottom;
       coords[row][col].bottom.deleted = true;
     }
     if (coords[row][col].right) {
-      right = coords[row][col].right.deleted;
+      right = coords[row][col].right;
       coords[row][col].right.deleted = true;
     }
     if (coords[row][col].left) {
-      left = coords[row][col].left.deleted;
+      left = coords[row][col].left;
       coords[row][col].left.deleted = true;
     }
-
+    // coords[row][col].visited = true;
     return [top, bottom, right, left];
   }
 
@@ -310,7 +313,13 @@ function Grid() {
     for (let i = 0; i <= rows; i++) {
       res[i] = [];
       for (let j = 0; j <= cols; j++) {
-        res[i][j] = { top: null, bottom: null, right: null, left: null };
+        res[i][j] = {
+          top: null,
+          bottom: null,
+          right: null,
+          left: null,
+          visited: false,
+        };
       }
     }
     return res;

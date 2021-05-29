@@ -32,24 +32,29 @@ function ClipGrid({ canvasLines }) {
       let validRows = canvasLines.filter(
         (line) => line.deleted === false && line.isRow === true,
       );
+
       let key = 0;
       for (let i = 0; i < validCols.length; i++) {
         const currentCol = validCols[i];
-        let a = containsRow("TOP", currentCol, validRows, MAX_DIFF);
-        if (a === true) {
+        if (containsRow("TOP", currentCol, validRows, MAX_DIFF)) {
           //If we have a top row we must have a next col on right side.
-          //Get columns from next available column and row.
+
+          //Get all possible columns that can be a bottom right.
           let sameIndexCols = validCols.filter(
             (line) =>
-              line.index === currentCol.index + 1 &&
+              line.index >= currentCol.index + 1 &&
               line.coords.y >= currentCol.coords.y,
           );
+          //The next column available will be the one we want to traverse.
+          //Only check columns with this index.
           let index = 0;
           let nextCol = sameIndexCols[index];
-          //Check next column to get the first bottom right corner.
+          sameIndexCols = sameIndexCols.filter(
+            (line) => line.index === nextCol.index,
+          );
+          //Check next available column to get the first bottom right corner.
           while (
             containsRow("BOTTOM", nextCol, validRows, MAX_DIFF) === false
-            // nextRow.deleted === true || nextCol.deleted === true
           ) {
             index++;
             nextCol = sameIndexCols[index];
