@@ -4,9 +4,21 @@ The user drops an image and is prompted with a form asking for rows and columns.
 They are then given a movable grid to clip the image and create cards. The cards are then<br/>
 randomized and given to the user.<br/>
 
+### Movable Grid
+
 <img src="/gifs/image-drop.gif" alt="Dropping of image" width="70%"> <br/>
+
+### Clipped Cards
+
 <img src="/gifs/grid-clip.gif" alt="Clipping of grid" width="70%"> <br/>
+
+### Matching
+
 <img src="/gifs/card-match.gif" alt="Matching Card" width="70%"> <br/>
+
+### Ensures merged cells are rectangles
+
+<img src="/gifs/merge-cells.gif" alt="Matching Card" width="70%"> <br/>
 
 ## TODO:
 
