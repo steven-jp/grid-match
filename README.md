@@ -10,7 +10,6 @@ randomized and given to the user.<br/>
 
 ## TODO:
 
--Fix merging cells algorithm. DFS only traverses a max of two rows/cols. (If we have rows in a row it will delete the first two) <br/>
 -Increase size of image beyond actual size when image is dragged. Only goes to actual size.<br/>
 -scale cards and squares when browser is resized. To do so we'd create a new method that takes existing coords and scales it. Each coord will have a value called scale which will pertain to what the image size was. We then get the coords in terms of the current image size.<br/>
 -Add some bounds to avoid grid lines from going past there neighbors on drag.<br/>

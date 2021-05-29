@@ -3,6 +3,7 @@ import DeleteButton from "./buttons/DeleteButton";
 import ClipButton from "./buttons/ClipButton";
 import ClipGrid from "./ClipGrid";
 import { GridContext } from "./App";
+import { GridDfs } from "./GridDfs";
 
 function Grid() {
   // to get context of canvas.
@@ -112,6 +113,7 @@ function Grid() {
         coords: { x: x, y: y, width: lineWidth, height: lineHeight },
         index: index,
         oppositeAxisIndex: oppositeAxisIndex,
+        visited: false,
       };
       canvasLines.current.push(line);
     }
@@ -142,7 +144,8 @@ function Grid() {
         if (ctx.isPointInPath(currentLine.path, x, y, "nonzero")) {
           //only delete lines that aren't on the ousides of the grid.
           if (!isBoundingLine(currentLine)) {
-            removeImproperLines(currentLine);
+            // removeImproperLines(currentLine);
+            GridDfs(canvasLines, currentLine, rows, cols);
           }
         }
       }
@@ -158,171 +161,6 @@ function Grid() {
         (!currentLine.isRow && currentLine.index !== cols))
       ? false
       : true;
-  }
-
-  /*All lines that don't have two opposite lines will be deleted unless the line
-    is a part of the grid bounds. If a line is deleted we want to make sure 
-    we only have lines that make up a rectangle. 
-
-    EX: The invalid grid has a non rectangle shape so the bottom 
-    right box will need to be deleted.
-        Valid           Invalid      Invalid shape
-        |_|_|           |_|_|            ___
-        |_|_|           |  _|           |  _|        
-        |_|_|           |_|_|           |_| 
-
-    If there is a row without it's current and previous column then it's
-    determined to be an improper line and will be deleted. This may cause another
-    line to be improper so we want to continue checking until all lines are valid. 
-  */
-  function removeImproperLines(deletedLine) {
-    let validLines = canvasLines.current.filter(
-      (line) => line.deleted === false,
-    );
-    // Format into a coordinates array. This will allow quicker lookup for line removal.
-    // Each coordinate will have a reference to maximum 4 lines that intersect. Once deleted,
-    // original canvas array will contain deletion.
-    let lineCoords = initArray();
-    validLines.forEach((line) => {
-      let [row, col] = getCoordinatesOfLine(line);
-      if (line.isRow) {
-        lineCoords[row][col] = { ...lineCoords[row][col], right: line };
-        if (col < cols) {
-          lineCoords[row][col + 1] = {
-            ...lineCoords[row][col + 1],
-            left: line,
-          };
-        }
-      } else {
-        lineCoords[row][col] = { ...lineCoords[row][col], bottom: line };
-        if (row < rows) {
-          lineCoords[row + 1][col] = {
-            ...lineCoords[row + 1][col],
-            top: line,
-          };
-        }
-      }
-    });
-    deletedLine.deleted = true;
-    //DFS on each coordinate that hasn't been deleted and set the lines to deleted that won't be drawn.
-    improperLineDFS(lineCoords, deletedLine);
-  }
-
-  /* This function returns the coordinates of a given line. It takes
-  a canvas line and an optional row or column. The optional values are used
-  to grab a coordinate with rows or cols greater */
-  function getCoordinatesOfLine(currentLine, row = 0, col = 0) {
-    return currentLine.isRow
-      ? [currentLine.index + row, currentLine.oppositeAxisIndex + col]
-      : [currentLine.oppositeAxisIndex + row, currentLine.index + col];
-  }
-
-  /* This function deletes all improper lines by doing a DFS. We only 
-  traverse lines that have the deleted flag. The deleted flag acts as a 
-  'visited' flag for the current DFS. Each line deleted can come in contact
-  with 8 lines (4 at a given coord and 4 at end of a line). */
-  function improperLineDFS(coords, line) {
-    //Only check lines that have been deleted and not visited yet
-    if (line === null || line === undefined || !line.deleted) {
-      return;
-    }
-    let [row, col] = getCoordinatesOfLine(line);
-    if (coords[row][col].visited) {
-      return;
-    }
-
-    //Check if the current line is a row and doesn't contain proper bounding columns or if it's
-    // a column and doesn't contain bounding rows;
-
-    //Check current coordinate lines
-    checkCoords(coords, line);
-    //Check next coordinate lines
-    if (line.isRow && validCoord(row, col + 1)) {
-      checkCoords(coords, coords[row][col + 1].left, 0, 1);
-    }
-    if (!line.isRow && validCoord(row + 1, col)) {
-      checkCoords(coords, coords[row + 1][col].top, 1, 0);
-    }
-  }
-
-  /*This is a helper function for improperLineDFS to avoid duplicate logic. 
-    This is called at most twice by the coordinate at the beginning and end of a line.
-    It traverses and deletes all lines at a given coordinate. */
-  function checkCoords(coords, line, incremRow = 0, incremCol = 0) {
-    if (line === null) {
-      return;
-    }
-    let [row, col] = getCoordinatesOfLine(line, incremRow, incremCol);
-    let top = coords[row][col].top;
-    let bottom = coords[row][col].bottom;
-    let right = coords[row][col].right;
-    let left = coords[row][col].left;
-
-    coords[row][col].visited = true;
-    //Only delete lines if they have any bounds missing.
-    if (
-      (line.isRow &&
-        (top === null || top.deleted || bottom === null || bottom.deleted)) ||
-      (!line.isRow &&
-        (left === null || left.deleted || right === null || right.deleted))
-    ) {
-      //Get and delete lines at coordinate
-      let [top, bottom, right, left] = deleteAllLines(coords, row, col);
-
-      //Check all the lines of a given coordinate.
-      improperLineDFS(coords, top);
-      improperLineDFS(coords, bottom);
-      improperLineDFS(coords, right);
-      improperLineDFS(coords, left);
-    }
-  }
-
-  /* Deletes all of the lines at a given coordinate and returns an array of previous deleted values. 
-  This is used to determine if we should DFS a given direction and prevents us from traversing the same 
-  line twice. */
-  function deleteAllLines(coords, row, col) {
-    let top, bottom, right, left;
-    if (coords[row][col].top) {
-      top = coords[row][col].top;
-      coords[row][col].top.deleted = true;
-    }
-    if (coords[row][col].bottom) {
-      bottom = coords[row][col].bottom;
-      coords[row][col].bottom.deleted = true;
-    }
-    if (coords[row][col].right) {
-      right = coords[row][col].right;
-      coords[row][col].right.deleted = true;
-    }
-    if (coords[row][col].left) {
-      left = coords[row][col].left;
-      coords[row][col].left.deleted = true;
-    }
-    // coords[row][col].visited = true;
-    return [top, bottom, right, left];
-  }
-
-  /* only visit coordinates that are in bounds. Coordinates on the outsides
-   aren't valid since they cannot be deleted */
-  function validCoord(row, col) {
-    return row < rows && row >= 0 && col < cols && cols >= 0 ? true : false;
-  }
-
-  function initArray() {
-    let res = [];
-    for (let i = 0; i <= rows; i++) {
-      res[i] = [];
-      for (let j = 0; j <= cols; j++) {
-        res[i][j] = {
-          top: null,
-          bottom: null,
-          right: null,
-          left: null,
-          visited: false,
-        };
-      }
-    }
-    return res;
   }
 
   /* =============Mouse movements for dragging lines=============*/
