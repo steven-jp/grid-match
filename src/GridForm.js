@@ -1,6 +1,25 @@
-function GridForm({ gridDimensions, handleGridChange, handleGridSubmit }) {
+import { useState } from "react";
+function GridForm({ handleGridSubmit }) {
+  const [gridDimensions, setGridDimensions] = useState({
+    rows: "3",
+    cols: "3",
+  });
+
+  //update grid dimensions
+  function handleGridChange(e) {
+    setGridDimensions({
+      ...gridDimensions,
+      [e.target.name]: e.target.value,
+    });
+  }
+
   return (
-    <form className="grid-form" onSubmit={handleGridSubmit}>
+    <form
+      className="grid-form"
+      onSubmit={(e) =>
+        handleGridSubmit(e, gridDimensions.rows, gridDimensions.cols)
+      }
+    >
       <label htmlFor="grid-row">Rows</label>
       <input
         type="text"

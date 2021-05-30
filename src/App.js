@@ -105,10 +105,7 @@ function App() {
   }, []);
 
   //Update rows and cols when user inputs values
-  function handleGridSubmit(e) {
-    e.preventDefault();
-    let rows = gridDimensions.rows;
-    let cols = gridDimensions.cols;
+  function handleGridSubmit(e, rows, cols) {
     // Check if value is between 1 and max and contains only numbers (/[^0-9]+)/
     if (
       rows.match(/[^0-9]+/) ||
@@ -126,16 +123,13 @@ function App() {
         cols: "",
       });
     } else {
+      setGridDimensions({
+        rows: rows,
+        cols: cols,
+      });
       setRenderGrid(true);
       setRenderForm(false);
     }
-  }
-  //update grid dimensions on form submit.
-  function handleGridChange(e) {
-    setGridDimensions({
-      ...gridDimensions,
-      [e.target.name]: e.target.value,
-    });
   }
 
   //Handle image uploads to main-grid.
@@ -162,7 +156,6 @@ function App() {
       return (
         <GridForm
           gridDimensions={gridDimensions}
-          handleGridChange={handleGridChange}
           handleGridSubmit={handleGridSubmit}
         />
       );
@@ -171,7 +164,9 @@ function App() {
   }
   //create image from user input
   function AddUserImage() {
-    return <img ref={imgRef} className="user-image" src={file} alt="" />;
+    return (
+      <img ref={imgRef} className="user-image" src={file} alt="User dropped" />
+    );
   }
 
   //child component calls this to remove image from grid. We set '
