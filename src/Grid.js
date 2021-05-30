@@ -34,7 +34,7 @@ function Grid() {
     } else {
       draw(ctx);
     }
-  }, [canvasRef]);
+  });
 
   /* create grid and add view */
   const createGrid = (ctx) => {
