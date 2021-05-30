@@ -1,5 +1,6 @@
 import React from "react";
 import "../App.css";
+import { defaultButtonColor } from "./colors";
 
 function ResetButton({ resetGrid }) {
   return (
@@ -7,7 +8,7 @@ function ResetButton({ resetGrid }) {
       onClick={resetGrid}
       className="Reset-grid"
       style={{
-        backgroundColor: "rgba(210, 210, 210, 0.6)",
+        backgroundColor: defaultButtonColor,
         left: "0",
         top: "0",
       }}

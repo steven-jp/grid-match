@@ -1,5 +1,6 @@
 import React from "react";
 import "../App.css";
+import { defaultButtonColor } from "./colors";
 
 function ReplayButton({ replayHandler }) {
   return (
@@ -7,9 +8,7 @@ function ReplayButton({ replayHandler }) {
       onClick={replayHandler}
       className="Replay-grid"
       style={{
-        backgroundColor: "rgba(210, 210, 210, 0.6)",
-        // left: "0",
-        // top: "0",
+        backgroundColor: defaultButtonColor,
       }}
     >
       Replay

@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { GridContext } from "../App";
+import { defaultButtonColor } from "./colors";
 
 function ClipButton() {
   const gridContext = useContext(GridContext);
@@ -12,7 +13,7 @@ function ClipButton() {
         className="Clip-grid"
         onClick={renderGridHandler}
         style={{
-          backgroundColor: "rgba(210, 210, 210, 0.6)",
+          backgroundColor: defaultButtonColor,
         }}
       >
         Clip Grid

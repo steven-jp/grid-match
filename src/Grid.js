@@ -27,6 +27,7 @@ function Grid() {
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
+
     // only create out canvas lines if they weren't created yet.
     if (!createdPreviously) {
       createGrid(ctx);
@@ -125,12 +126,29 @@ function Grid() {
   /* Update view of grid */
   function draw(ctx) {
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    ctx.fillStyle = ctx.createPattern(getLinePattern(), "repeat");
     canvasLines.current.forEach((line) => {
       //only draw lines that haven't been deleted
       if (line.deleted === false) {
         ctx.fill(line.path, "nonzero");
       }
     });
+  }
+
+  function getLinePattern() {
+    var pattern = document.createElement("canvas");
+    pattern.width = 3;
+    pattern.height = 3;
+    var pctx = pattern.getContext("2d");
+    pctx.strokeStyle = "black";
+    pctx.lineWidth = 2;
+    pctx.beginPath();
+    pctx.moveTo(0, 0);
+    pctx.lineTo(10, 10);
+    pctx.moveTo(0, 10);
+    pctx.lineTo(10, 0);
+    pctx.stroke();
+    return pattern;
   }
   //handles deletion of lines for merging cells.
   const onClickHandler = (e) => {

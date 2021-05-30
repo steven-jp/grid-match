@@ -24,7 +24,7 @@ function Square({ id, dimensions }) {
       className="Square"
       ref={drop}
       style={{
-        backgroundColor: isOver ? "rgb(173,149,149)" : "blue",
+        backgroundColor: isOver ? "rgb(173,149,149)" : "rgb(68, 86, 187)",
         top: dimensions.yStart,
         left: dimensions.xStart,
         height: dimensions.yEnd - dimensions.yStart,

@@ -102,8 +102,7 @@
   display: inline-block;
   z-index: 500;
   position: absolute;
-  box-sizing: border-box;
-  border-radius: 5px;
+  border-radius: 10px;
   border: dashed;
 }
 

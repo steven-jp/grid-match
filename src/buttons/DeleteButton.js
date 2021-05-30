@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { GridContext } from "../App";
+import { defaultButtonColor } from "./colors";
 
 function DeleteButton({ buttonClicked, toggle }) {
   const gridContext = useContext(GridContext);
@@ -12,7 +13,7 @@ function DeleteButton({ buttonClicked, toggle }) {
         style={{
           backgroundColor: buttonClicked
             ? "rgba(45, 49, 92, 0.75)"
-            : "rgba(210, 210, 210, 0.6)",
+            : defaultButtonColor,
           color: buttonClicked ? "white" : "black",
         }}
       >
