@@ -7,7 +7,7 @@ import Carousel from "react-elastic-carousel";
 import ReplayButton from "./buttons/ReplayButton";
 import Score from "./Score";
 
-function ClipGrid({ canvasLines }) {
+function ClipGrid({ canvasLines, xLength, yLength }) {
   const gridContext = useContext(GridContext);
   let clicked = gridContext.renderCards;
   let cards = gridContext.cards;
@@ -63,7 +63,10 @@ function ClipGrid({ canvasLines }) {
             xStart: currentCol.coords.x,
             yStart: currentCol.coords.y,
             xEnd: nextCol.coords.x,
-            yEnd: nextCol.coords.y + nextCol.coords.height,
+            yEnd:
+              nextCol.coords.y +
+              nextCol.coords.height -
+              nextCol.coords.overSized,
             id: key,
           };
           validCoords.push(dimensions);

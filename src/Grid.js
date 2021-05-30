@@ -24,7 +24,7 @@ function Grid() {
   //Disable canvas when grid is clipped.
   let displayCanvas = gridContext.displayCanvas;
   let canvasLines = gridContext.canvasLines;
-
+  //Bottom right corner of grid will have a
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
 
@@ -41,30 +41,31 @@ function Grid() {
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     //used to determine how big each line will be for grid.
     const lineSize = 5;
-    const lineX = (width - 0) / cols;
-    const lineY = (height - 0) / rows;
+    const lineX = (width - lineSize) / cols;
+    const lineY = (height - lineSize) / rows;
     //keep track of the current row/col for easy lookup on drag.
     let currentRow = 0;
     let currentCol = 0;
-    //draw columns row at a time for when we check bounds in ClipGrid.
-    let lastIndex = 0;
-    for (let y = 0; y < height; y += lineY) {
+    //draw columns.
+    for (let y = 0; y < height - lineY; y += lineY) {
       currentCol = 0;
+
       for (let x = 0; x < width; x += lineX) {
-        createLine(x, y, lineSize, lineY, false, currentCol++, currentRow);
-      }
-      /* Draw right columns on edges of canvas to prevent 
-        being out of bounds */
-      if (currentCol === cols) {
-        createLine(
-          width - lineSize,
-          y,
-          lineSize,
-          lineY,
-          false,
-          currentCol,
-          lastIndex++,
-        );
+        //If the last column we want to make it lineSize larger to account for missing square of size
+        //linsizexlinesize in bottom right corner.
+        if (currentRow === rows - 1 && currentCol === cols) {
+          createLine(
+            x,
+            y,
+            lineSize,
+            lineY + lineSize,
+            false,
+            currentCol++,
+            currentRow,
+          );
+        } else {
+          createLine(x, y, lineSize, lineY, false, currentCol++, currentRow);
+        }
       }
       currentRow++;
     }
@@ -73,27 +74,24 @@ function Grid() {
     //draw rows
     for (let y = 0; y < height; y += lineY) {
       currentCol = 0;
-      for (let x = 0; x < width; x += lineX) {
-        createLine(x, y, lineX, lineSize, true, currentRow, currentCol++);
+      for (let x = 0; x < width - lineX; x += lineX) {
+        //If the last column we want to make it lineSize larger to account for missing square of size
+        //linsizexlinesize in bottom right corner.
+        if (currentRow === rows && currentCol === cols - 1) {
+          createLine(
+            x,
+            y,
+            lineX + lineSize,
+            lineSize,
+            true,
+            currentRow,
+            currentCol++,
+          );
+        } else {
+          createLine(x, y, lineX, lineSize, true, currentRow, currentCol++);
+        }
       }
       currentRow++;
-    }
-
-    /* Draw bottom row on edges of canvas to prevent 
-    being out of bounds */
-
-    //Draw bottom row
-    currentCol = 0;
-    for (let x = 0; x < width; x += lineX) {
-      createLine(
-        x,
-        height - lineSize,
-        lineX,
-        lineSize,
-        true,
-        rows,
-        currentCol++,
-      );
     }
     function createLine(
       x,
@@ -107,11 +105,21 @@ function Grid() {
       let path = new Path2D();
       path.rect(x, y, lineWidth, lineHeight);
 
+      //oversized flag is used so that gridlines aren't drawn past what they should be.
+      //This flag will only be equal to linesize in the last column. The last column and row were
+      //enlarged to avoid a missing lineSize X lineSize square.
+      let overSized = !isRow && lineHeight > lineY ? lineSize : 0;
       let line = {
         isRow: isRow,
         deleted: false,
         path: path,
-        coords: { x: x, y: y, width: lineWidth, height: lineHeight },
+        coords: {
+          x: x,
+          y: y,
+          width: lineWidth,
+          height: lineHeight,
+          overSized: overSized,
+        },
         index: index,
         oppositeAxisIndex: oppositeAxisIndex,
         visited: false,
@@ -135,6 +143,7 @@ function Grid() {
     });
   }
 
+  /* Creates a pattern of X's. This is used to fill canvas lines */
   function getLinePattern() {
     var pattern = document.createElement("canvas");
     pattern.width = 3;
@@ -150,7 +159,7 @@ function Grid() {
     pctx.stroke();
     return pattern;
   }
-  //handles deletion of lines for merging cells.
+  /* Handles deletion of lines for merging cells. */
   const onClickHandler = (e) => {
     if (deleteClicked) {
       const ctx = canvasRef.current.getContext("2d");
@@ -190,7 +199,7 @@ function Grid() {
       shrinking: [],
       expanding: [],
     };
-  //Get starting coordinates of grid element that was clicked.
+  /* Get starting coordinates of grid element that was clicked. */
   const mouseDownHandler = (e) => {
     e.preventDefault();
     const ctx = canvasRef.current.getContext("2d");
@@ -226,7 +235,7 @@ function Grid() {
     }
   };
 
-  //handle grid movement.
+  /* Handle grid movement. */
   const mouseMoveHandler = (e) => {
     e.preventDefault();
     if (gridLines.moving) {

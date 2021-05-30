@@ -30,6 +30,6 @@ randomized and given to the user.<br/>
 -Add unit test to ensure grid clips all the way up to 20x20.<br/>
 -Game resets to same cards when all cards are matched. Lift cards/squares state up. This should also remove the bug where ocassionally the first card on a recreation matches fine but doesn't remove from array. It will also remove cards rerendering when browser is resized.<br/>
 -Maybe add OCR and google api to look up definition of columns/rows. <br/>
--Add animation to buttons. <br/>
+-Add animation to buttons / visibility improvements. <br/>
 -Add browse button for image or ability to use URL. <br/>
 -Clean up code<br/>

@@ -164,9 +164,7 @@ function App() {
   }
   //create image from user input
   function AddUserImage() {
-    return (
-      <img ref={imgRef} className="user-image" src={file} alt="User dropped" />
-    );
+    return <img ref={imgRef} className="user-image" src={file} alt="" />;
   }
 
   //child component calls this to remove image from grid. We set '
