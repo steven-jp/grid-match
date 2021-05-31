@@ -7,7 +7,7 @@ import Carousel from "react-elastic-carousel";
 import ReplayButton from "./buttons/ReplayButton";
 import Score from "./Score";
 
-function ClipGrid({ canvasLines, xLength, yLength }) {
+function ClipGrid({ canvasLines }) {
   const gridContext = useContext(GridContext);
   let clicked = gridContext.renderCards;
   let cards = gridContext.cards;
