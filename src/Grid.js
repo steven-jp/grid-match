@@ -10,7 +10,6 @@ function Grid() {
   const canvasRef = useRef(null);
   //Remove delete button and canvas (used for grid) on grid clip.
   const [deleteClicked, setDeleteClicked] = useState(false);
-  // const [displayCanvas, setDisplayCanvas] = useState(true);
   const gridContext = useContext(GridContext);
   // Dimensions of canvas
   let width = gridContext.dimensions.width;

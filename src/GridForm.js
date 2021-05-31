@@ -1,8 +1,8 @@
 import { useState } from "react";
 function GridForm({ handleGridSubmit }) {
   const [gridDimensions, setGridDimensions] = useState({
-    rows: "3",
-    cols: "3",
+    rows: "",
+    cols: "",
   });
 
   //update grid dimensions
