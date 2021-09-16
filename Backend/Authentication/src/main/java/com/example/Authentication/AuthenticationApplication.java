@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.example.Authentication.User","com.example.Authentication.Security"})
+@ComponentScan(basePackages = {"com.example.Authentication.User","com.example.Authentication.Security","com.example.Authentication.File"})
 public class AuthenticationApplication {
 
 	public static void main(String[] args) {
