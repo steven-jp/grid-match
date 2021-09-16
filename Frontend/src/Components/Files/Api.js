@@ -34,4 +34,20 @@ async function uploadFile(id) {
     });
 }
 
-export { uploadFile, downloadFile };
+async function deleteFile(id) {
+  axios
+    .delete(URL + "/" + id, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((error) => {
+      console.log(error);
+      console.log(error.response);
+    });
+}
+
+export { uploadFile, downloadFile, deleteFile };
