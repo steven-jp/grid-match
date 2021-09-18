@@ -13,6 +13,7 @@ import Grid from "./Grid";
 import ResetButton from "./Buttons/ResetButton";
 import GridForm from "./GridForm";
 import { scoreReducer } from "./Reducers/index";
+import { uploadFile } from "../Components/Files/Api";
 
 // fix bug with dropping multiple images. re brings up the forms
 
@@ -137,6 +138,9 @@ function Game() {
       setFile(URL.createObjectURL(files[0]));
       setText("");
       setRenderForm(true);
+      const formData = new FormData();
+      formData.append("file", files[0]);
+      uploadFile(formData);
     }
   };
   //only add grid after form is submitted.

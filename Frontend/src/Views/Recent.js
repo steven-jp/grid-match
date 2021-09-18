@@ -1,6 +1,6 @@
 import { Container, Button } from "@material-ui/core";
 import React from "react";
-import { downloadFile, uploadFile } from "../Components/Files/Api";
+import { getFile, uploadFile, deleteFile } from "../Components/Files/Api";
 
 const Recent = () => {
   return (
@@ -9,7 +9,9 @@ const Recent = () => {
         <Button
           color="primary"
           style={{ textTransform: "none" }}
-          onClick={() => downloadFile(1234)}
+          onClick={() =>
+            deleteFile("1631999089447Screen Shot 2021-06-28 at 12.33.11 PM.png")
+          }
         >
           --- TESTER ---
         </Button>

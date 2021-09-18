@@ -2,7 +2,10 @@ package com.example.Authentication.File;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
 @RequestMapping("/file")
@@ -11,17 +14,19 @@ public class FileController {
     @Autowired
     private FileService service;
 
-    @GetMapping("/{id}")
-    public String downloadFile(@PathVariable long id) {
-        return service.downloadFile(id);
+    @GetMapping("/{key}")
+    public String getFile(@PathVariable String key) {
+        return service.getFile(key);
     }
-    @PostMapping("/{id}")
-    public String uploadFile(@PathVariable long id) {
-        return service.uploadFile(id);
+//    @PostMapping("/{id}")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile multipartFile) {
+        return service.uploadFile(multipartFile);
     }
-    @DeleteMapping("/{id}")
-    public String deleteFile(@PathVariable long id) {
-        return service.uploadFile(id);
+    @DeleteMapping("/{key}")
+    public ResponseEntity<?> deleteFile(@PathVariable String key) {
+        return service.deleteFile(key);
     }
+
 }
 
