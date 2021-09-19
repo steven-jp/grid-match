@@ -15,7 +15,7 @@ function App() {
           <Route path="/" exact component={Game} />
           <Route path="/login" component={Login} />
           <Route path="/recent" component={Recent} />
-          <Route component={NotFound} />
+          {/* <Route component={NotFound} /> */}
         </Switch>
       </Router>
     </div>
