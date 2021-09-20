@@ -19,7 +19,7 @@ import { uploadFile } from "../Components/Files/Api";
 
 export const GridContext = createContext();
 
-function Game() {
+function Game(props) {
   const myRef = useRef(null); // reference to grid for grabbing size.
   const MAX_GRID_DIMS = 20; // only allows a max 20x20 grid.
 
@@ -50,7 +50,6 @@ function Game() {
   const [squares, setSquares] = useState([]);
 
   //Handles keeping track of score.
-
   const [scoreState, scoreDispatch] = useReducer(scoreReducer, {
     correct: 0,
     incorrect: 0,
@@ -92,6 +91,22 @@ function Game() {
     return () => window.removeEventListener("resize", updateSize);
   }, [myRef]);
 
+  //allows incoming images from other pages
+  useEffect(() => {
+    if (
+      props.location.state !== undefined &&
+      props.location.state.recentImage !== undefined
+    ) {
+    let blob = URL.createObjectURL(
+      new Blob(props.location.state.recentImage),
+    );
+    setFile(blob);
+    setText("");
+    setRenderForm(true);
+    window.history.replaceState(null, '')
+    }
+  }, []);
+  
   //Focus image ref to get width/height.
   const imgRef = useCallback((ref) => {
     if (ref) {
@@ -193,6 +208,7 @@ function Game() {
     setCards([]);
     setSquares([]);
     scoreDispatch({ type: "RESET" });
+    window.history.replaceState(null, '')
   }
 
   return (

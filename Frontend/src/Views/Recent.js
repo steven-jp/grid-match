@@ -8,6 +8,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { getFiles, uploadFile, deleteFile } from "../Components/Files/Api";
 import ClipGrid from "../Game/ClipGrid";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,7 +47,19 @@ const Recent = () => {
             <ImageList rowHeight={300} className={classes.gridElement}>
               {userFiles.map((url, count) => (
                 <ImageListItem key={count}>
-                  <img src={url} alt={"Image" + count} />;
+                  <Link
+                    to={{
+                      pathname: "/",
+                      state: { recentImage: url },
+                    }}
+                  >
+                    <img
+                      src={window.URL.createObjectURL(new Blob(url))}
+                      alt={"Image" + count}
+                    />
+                    ;
+                  </Link>
+                  {/* <img src={url} alt={"Image" + count} />; */}
                 </ImageListItem>
               ))}
             </ImageList>

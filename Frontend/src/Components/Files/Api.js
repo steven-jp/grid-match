@@ -30,7 +30,8 @@ async function getFiles(setUserFiles) {
       Promise.all(promises)
         .then((promisedFiles) => {
           promisedFiles.forEach((file) => {
-            files.push(window.URL.createObjectURL(new Blob([file])));
+            // files.push(window.URL.createObjectURL(new Blob([file])));
+            files.push([file]);
           });
         })
         //Add to state
