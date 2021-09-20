@@ -25,7 +25,6 @@ public class FileController {
         return service.getAllFileKeys();
     }
 
-//    @PostMapping("/{id}")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile multipartFile) {
         return service.uploadFile(multipartFile);

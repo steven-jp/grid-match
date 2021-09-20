@@ -1,9 +1,9 @@
 package com.example.Authentication.File;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import com.example.Authentication.Security.UserDetailsImpl;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,10 +11,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -31,7 +34,7 @@ public class FileService {
     private String region;
 
     public ResponseEntity<?> getFile(String key) throws IOException {
-        S3Object s3Object = client.getObject(bucket,key);
+        S3Object s3Object = client.getObject(bucket,getUserStorageLocation()+key);
         S3ObjectInputStream inputStream = s3Object.getObjectContent();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         IOUtils.copy(inputStream, outputStream);
@@ -39,11 +42,19 @@ public class FileService {
         byte[] byteArray = IOUtils.toByteArray(s3Object.getObjectContent());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                .body(byteArray);
                 .body(outputStream.toByteArray());
     }
     public ResponseEntity<?> getAllFileKeys() throws IOException {
-        String[] fileNames = new String[]{"1632016381977Screen Shot 2021-06-28 at 12.37.06 PM.png","1632084925709Screen Shot 2021-06-28 at 12.33.11 PM.png"};
+        String prefix = getUserStorageLocation();
+        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucket).withPrefix(prefix).withDelimiter("/");
+        ListObjectsV2Result res = client.listObjectsV2(req);
+        List<S3ObjectSummary> summaries = res.getObjectSummaries();
+        String[] fileNames = new String[summaries.size()];
+
+        //remove prefix from s3 key
+        for (int i = 0; i < summaries.size(); i++) {
+            fileNames[i] = summaries.get(i).getKey().substring(prefix.length());
+        }
 
         return ResponseEntity.ok()
                 .body(fileNames);
@@ -56,14 +67,21 @@ public class FileService {
         } catch (IOException e) {
             return responseBuilder("File failed to upload", HttpStatus.BAD_REQUEST);
         }
-        client.putObject(bucket, System.currentTimeMillis()+file.getName(), file);
+        client.putObject(bucket, getUserStorageLocation() + System.currentTimeMillis()+file.getName(), file);
         file.delete();
         return responseBuilder("Successfully uploaded file : " + file.getName(), HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteFile(String key) {
-        client.deleteObject(bucket, key);
+        client.deleteObject(bucket, getUserStorageLocation() + key);
         return responseBuilder("Successfully deleted file", HttpStatus.OK);
+    }
+
+    /* Get storage location of user images */
+    public String getUserStorageLocation(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String user = (String) auth.getPrincipal();
+        return user + "/";
     }
 
     public File multiPartFileToFile(MultipartFile multipartFile) throws IOException {

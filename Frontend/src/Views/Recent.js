@@ -35,13 +35,13 @@ const Recent = () => {
       <div className={classes.root}>
         <Container maxWidth="md">
           <h1>Recent page</h1>
-          <Button
+          {/* <Button
             color="primary"
             style={{ textTransform: "none" }}
             onClick={() => getFiles(setUserFiles)}
           >
             --- TESTER ---
-          </Button>
+          </Button> */}
           {userFiles ? (
             <ImageList rowHeight={300} className={classes.gridElement}>
               {userFiles.map((url, count) => (
